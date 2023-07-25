@@ -30,7 +30,7 @@ out/
 /gradle/wrapper/gradle-wrapper.jar
 /gradlew.bat
 /settings.gradle
-/application*.*
+/src/main/resources/application*.yml
 
 ### NetBeans ###
 /nbproject/private/
