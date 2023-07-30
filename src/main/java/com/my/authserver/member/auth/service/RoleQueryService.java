@@ -5,18 +5,18 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.my.authserver.domain.entity.member.auth.Role;
 import com.my.authserver.member.auth.repository.RoleRepository;
+import com.my.authserver.member.enums.RoleType;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class RoleService {
+public class RoleQueryService {
 
 	private final RoleRepository roleRepository;
 
-	public void createRole(Role role) {
-		roleRepository.save(role);
+	public Role findByRoleType(RoleType roleType) {
+		return roleRepository.findByRoleType(roleType);
 	}
-
 }
