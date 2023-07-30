@@ -14,7 +14,7 @@ public enum RoleType {
 	ROLE_MEMBER("회원"),
 	ROLE_ADMIN("관리자");
 
-	private String roleName;
+	private String roleDesc;
 
 	public static RoleType findRole(String roleName) {
 		return Arrays.stream(RoleType.values())
