@@ -1,7 +1,7 @@
 package com.my.authserver.domain.entity.member.auth;
 
 import com.my.authserver.domain.entity.BaseEntity;
-import com.my.authserver.member.enums.Roles;
+import com.my.authserver.member.enums.RoleType;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -27,14 +27,14 @@ public class Role extends BaseEntity {
 	private Long id;
 
 	@Enumerated(EnumType.STRING)
-	@Column(columnDefinition = "varchar(20)")
-	private Roles roleName;
+	@Column(columnDefinition = "varchar(20)", unique = true)
+	private RoleType roleType;
 
 	private String roleDesc; // 권한 상세설명
 
 	@Builder
-	public Role(Roles roleName, String roleDesc) {
-		this.roleName = roleName;
+	private Role(RoleType roleType, String roleDesc) {
+		this.roleType = roleType;
 		this.roleDesc = roleDesc;
 	}
 }
