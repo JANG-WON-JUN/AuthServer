@@ -33,4 +33,8 @@ public class RoleQueryService {
 		return roleOptional.orElseThrow(()
 			-> new RoleNotFound(messageSourceUtils.getMessage("error.noRole")));
 	}
+
+	public boolean exists(RoleType roleType) {
+		return roleRepository.findByRoleType(roleType).isPresent();
+	}
 }
