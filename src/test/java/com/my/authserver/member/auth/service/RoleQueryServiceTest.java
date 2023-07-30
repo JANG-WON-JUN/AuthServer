@@ -32,9 +32,7 @@ class RoleQueryServiceTest {
 		// given
 		RoleType roleType = ROLE_ANONYMOUS;
 
-		Role role = createRole(roleType, roleType.getRoleDesc());
-
-		roleRepository.save(role);
+		saveRole(roleType, roleType.getRoleDesc());
 
 		// when
 		Role savedRole = roleQueryService.findByRoleType(roleType);
@@ -63,9 +61,7 @@ class RoleQueryServiceTest {
 		Long roleId = 1L;
 		RoleType roleType = ROLE_ANONYMOUS;
 
-		Role role = createRole(roleType, roleType.getRoleDesc());
-
-		roleRepository.save(role);
+		saveRole(roleType, roleType.getRoleDesc());
 
 		// when
 		Role savedRole = roleQueryService.findById(roleId);
@@ -87,10 +83,43 @@ class RoleQueryServiceTest {
 			.hasMessage(messageSourceUtils.getMessage("error.noRole"));
 	}
 
+	@Test
+	@DisplayName("권한이 존재하면 참을 반환한다.")
+	void exists() {
+		// given
+		RoleType roleType = ROLE_ANONYMOUS;
+
+		saveRole(roleType, roleType.getRoleDesc());
+
+		// when
+		boolean exists = roleQueryService.exists(roleType);
+
+		// then
+		assertThat(exists).isTrue();
+	}
+
+	@Test
+	@DisplayName("권한이 존재하지 않으면 거짓을 반환한다.")
+	void existsWithNoRole() {
+		// given
+		RoleType roleType = ROLE_ANONYMOUS;
+
+		// when
+		boolean exists = roleQueryService.exists(roleType);
+
+		// then
+		assertThat(exists).isFalse();
+	}
+
 	private Role createRole(RoleType roleType, String roleDesc) {
 		return Role.builder()
 			.roleType(roleType)
 			.roleDesc(roleDesc)
 			.build();
+	}
+
+	private Role saveRole(RoleType roleType, String roleDesc) {
+		Role role = createRole(roleType, roleDesc);
+		return roleRepository.save(role);
 	}
 }

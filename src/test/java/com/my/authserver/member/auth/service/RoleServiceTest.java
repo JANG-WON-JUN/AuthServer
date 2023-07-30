@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.my.authserver.annotation.MyServiceTest;
 import com.my.authserver.common.utils.MessageSourceUtils;
+import com.my.authserver.common.web.exception.dto.RoleAlreadyExists;
 import com.my.authserver.common.web.exception.dto.RoleNotFound;
 import com.my.authserver.domain.entity.member.auth.Role;
 import com.my.authserver.member.auth.repository.RoleRepository;
@@ -47,6 +48,21 @@ class RoleServiceTest {
 
 		assertThat(savedRole.getId()).isNotNull();
 		assertThat(savedRole.getRoleType()).isEqualByComparingTo(roleType);
+	}
+
+	@Test
+	@DisplayName("이미 존재하는 권한을 생성하려하면 예외가 발생한다.")
+	void createRoleWithExistsRole() {
+		// given
+		RoleType roleType = RoleType.ROLE_ANONYMOUS;
+		RoleCreateServiceRequest request = createRequest(roleType, roleType.getRoleDesc());
+
+		roleService.createRole(request);
+
+		// expected
+		assertThatThrownBy(() -> roleService.createRole(request))
+			.isInstanceOf(RoleAlreadyExists.class)
+			.hasMessage(messageSourceUtils.getMessage("error.roleAlreadyExist"));
 	}
 
 	@Test
