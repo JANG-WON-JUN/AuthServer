@@ -1,5 +1,12 @@
 package com.my.authserver.domain.entity.member;
 
+import static java.lang.Integer.*;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import com.my.authserver.domain.entity.BaseEntity;
 import com.my.authserver.domain.entity.member.auth.MemberRoles;
 import com.my.authserver.domain.entity.member.embedded.BirthDay;
@@ -7,36 +14,45 @@ import com.my.authserver.member.enums.Level;
 import com.my.authserver.member.enums.Sex;
 import com.my.authserver.member.enums.State;
 
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import static java.lang.Integer.MAX_VALUE;
-
 @Entity
-@Table(name = "MEMBER_TB")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "MEMBER_TB", indexes = {
+	@Index(name = "idx_email", columnList = "email", unique = true),
+	@Index(name = "idx_nickname", columnList = "nickname", unique = true)}
+)
 public class Member extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(unique = true, columnDefinition = "varchar(100)", nullable = false)
+	@Column(columnDefinition = "varchar(100)", nullable = false)
 	private String email;
 
 	@Column(columnDefinition = "varchar(100)")
 	private String name;
 
-	@Column(unique = true, columnDefinition = "varchar(100)")
+	@Column(columnDefinition = "varchar(100)")
 	private String nickname;
 
 	private int levelPoint;
@@ -73,7 +89,7 @@ public class Member extends BaseEntity {
 	private Set<MemberRoles> memberRoles = new HashSet<>();
 
 	@Builder
-	public Member(String email, String name, String nickname,
+	private Member(String email, String name, String nickname,
 		BirthDay birthDay, Sex sex, State state) {
 		this.email = email;
 		this.name = name;
