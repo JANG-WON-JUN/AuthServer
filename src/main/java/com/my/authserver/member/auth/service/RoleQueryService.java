@@ -1,8 +1,12 @@
 package com.my.authserver.member.auth.service;
 
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.my.authserver.common.utils.MessageSourceUtils;
+import com.my.authserver.common.web.exception.dto.RoleNotFound;
 import com.my.authserver.domain.entity.member.auth.Role;
 import com.my.authserver.member.auth.repository.RoleRepository;
 import com.my.authserver.member.enums.RoleType;
@@ -14,9 +18,19 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class RoleQueryService {
 
+	private final MessageSourceUtils messageSourceUtils;
 	private final RoleRepository roleRepository;
 
 	public Role findByRoleType(RoleType roleType) {
-		return roleRepository.findByRoleType(roleType);
+		return getRoleFrom(roleRepository.findByRoleType(roleType));
+	}
+
+	public Role findById(Long id) {
+		return getRoleFrom(roleRepository.findById(id));
+	}
+
+	private Role getRoleFrom(Optional<Role> roleOptional) {
+		return roleOptional.orElseThrow(()
+			-> new RoleNotFound(messageSourceUtils.getMessage("error.noRole")));
 	}
 }
