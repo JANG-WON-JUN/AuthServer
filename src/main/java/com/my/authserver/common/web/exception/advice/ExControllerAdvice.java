@@ -1,9 +1,7 @@
 package com.my.authserver.common.web.exception.advice;
 
-import static java.util.Locale.*;
 import static org.springframework.http.HttpStatus.*;
 
-import org.springframework.context.MessageSource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
@@ -11,6 +9,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.my.authserver.common.utils.MessageSourceUtils;
 import com.my.authserver.common.web.exception.AuthServerException;
 import com.my.authserver.common.web.exception.dto.ErrorResult;
 
@@ -20,7 +19,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ExControllerAdvice {
 
-	private final MessageSource messageSource;
+	private final MessageSourceUtils messageSourceUtils;
 
 	@ResponseBody // ExceptionHandler에서 json으로 넘길 때!
 	@ExceptionHandler
@@ -28,7 +27,7 @@ public class ExControllerAdvice {
 	public ResponseEntity<ErrorResult> invalidRequestHandler(BindException e) {
 		String errorMessage = e.hasGlobalErrors() ?
 			e.getBindingResult().getGlobalError().getDefaultMessage()
-			: messageSource.getMessage("error.badRequest", null, getDefault());
+			: messageSourceUtils.getMessage("error.badRequest");
 
 		ErrorResult errorResult = ErrorResult.builder()
 			.errorCode(BAD_REQUEST)
