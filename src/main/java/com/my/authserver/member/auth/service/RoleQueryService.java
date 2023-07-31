@@ -2,6 +2,7 @@ package com.my.authserver.member.auth.service;
 
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -10,6 +11,7 @@ import com.my.authserver.common.web.exception.dto.RoleNotFound;
 import com.my.authserver.domain.entity.member.auth.Role;
 import com.my.authserver.member.auth.repository.RoleRepository;
 import com.my.authserver.member.enums.RoleType;
+import com.my.authserver.member.web.request.RoleSearchCondition;
 
 import lombok.RequiredArgsConstructor;
 
@@ -27,6 +29,10 @@ public class RoleQueryService {
 
 	public Role findById(Long id) {
 		return getRoleFrom(roleRepository.findById(id));
+	}
+
+	public Page<Role> findRolesWithCondition(RoleSearchCondition condition) {
+		return roleRepository.findRolesWithCondition(condition);
 	}
 
 	private Role getRoleFrom(Optional<Role> roleOptional) {
