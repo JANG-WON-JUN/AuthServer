@@ -3,7 +3,7 @@ package com.my.authserver.member.auth.web;
 import static com.my.authserver.member.enums.RoleType.*;
 import static java.nio.charset.StandardCharsets.*;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.BDDMockito.*;
 import static org.springframework.http.HttpStatus.*;
 import static org.springframework.http.MediaType.*;
 import static org.springframework.test.util.ReflectionTestUtils.*;
@@ -27,11 +27,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.my.authserver.common.utils.MessageSourceUtils;
 import com.my.authserver.common.web.exception.dto.RoleNotFound;
 import com.my.authserver.domain.entity.member.auth.Role;
-import com.my.authserver.member.auth.service.RoleQueryService;
 import com.my.authserver.member.auth.service.RoleService;
+import com.my.authserver.member.auth.service.query.RoleQueryService;
 import com.my.authserver.member.enums.RoleType;
 import com.my.authserver.member.web.request.RoleCreateRequest;
 import com.my.authserver.member.web.request.RoleSearchCondition;
+import com.my.authserver.member.web.request.RoleUpdateRequest;
 
 @WebMvcTest(value = RoleController.class)
 // 스프링 시큐리티를 사용하지 않을 떄 필터 제외
@@ -57,8 +58,7 @@ class RoleControllerTest {
 	@DisplayName("권한 생성 시 필요한 정보를 받아 권한을 생성한다.")
 	void createSavedRole() throws Exception {
 		// given
-		RoleType roleType = ROLE_ADMIN;
-		RoleCreateRequest request = createRoleRequest(roleType);
+		RoleCreateRequest request = createRoleRequest(ROLE_ADMIN);
 
 		// expected
 		mockMvc.perform(post("/admin/api/roles")
@@ -100,11 +100,10 @@ class RoleControllerTest {
 	@DisplayName("권한 아이디를 입력받아 권한 1개를 조회한다.")
 	void findRole() throws Exception {
 		// given
-		RoleType roleType = ROLE_ANONYMOUS;
-		Role role = createSavedRole(roleType);
+		Role role = createSavedRole(ROLE_ANONYMOUS);
 
-		when(roleQueryService.findById(anyLong()))
-			.thenReturn(role);
+		given(roleQueryService.findById(anyLong()))
+			.willReturn(role);
 
 		// expected
 		mockMvc.perform(get("/admin/api/roles/1")
@@ -118,10 +117,8 @@ class RoleControllerTest {
 	@DisplayName("존재하지 않는 권한 아이디를 입력받아 권한 1개를 조회하면 예외가 발생한다.")
 	void findRoleWithNoId() throws Exception {
 		// given
-		RoleType roleType = ROLE_ANONYMOUS;
-
-		when(roleQueryService.findById(anyLong()))
-			.thenThrow(new RoleNotFound(""));
+		given(roleQueryService.findById(anyLong()))
+			.willThrow(new RoleNotFound(""));
 
 		// expected
 		mockMvc.perform(get("/admin/api/roles/1")
@@ -133,16 +130,12 @@ class RoleControllerTest {
 	@DisplayName("조회 조건을 적용하여 권한 목록을 조회한다.")
 	void findRolesWithCondition() throws Exception {
 		// given
-		RoleType roleType1 = ROLE_ANONYMOUS;
-		RoleType roleType2 = ROLE_MEMBER;
-		RoleType roleType3 = ROLE_ADMIN;
+		saveRoles(List.of(ROLE_ANONYMOUS, ROLE_MEMBER, ROLE_ADMIN));
 
-		saveRoles(List.of(roleType1, roleType2, roleType3));
+		RoleSearchCondition condition = createRoleSearchCondition(null);
 
-		RoleSearchCondition condition = createRoleSearchCondition(0, null);
-
-		when(roleQueryService.findRolesWithCondition(any(RoleSearchCondition.class)))
-			.thenReturn(createPage(List.of()));
+		given(roleQueryService.findRolesWithCondition(any(RoleSearchCondition.class)))
+			.willReturn(createPage(List.of()));
 
 		// expected
 		mockMvc.perform(get("/admin/api/roles")
@@ -157,16 +150,12 @@ class RoleControllerTest {
 	@DisplayName("권한 설명을 조회 조건으로 받아 조건을 만족하는 권한 목록을 조회한다.")
 	void findRolesWithConditionWithKeyword() throws Exception {
 		// given
-		RoleType roleType1 = ROLE_ANONYMOUS;
-		RoleType roleType2 = ROLE_MEMBER;
-		RoleType roleType3 = ROLE_ADMIN;
+		saveRoles(List.of(ROLE_ANONYMOUS, ROLE_MEMBER, ROLE_ADMIN));
 
-		saveRoles(List.of(roleType1, roleType2, roleType3));
+		RoleSearchCondition condition = createRoleSearchCondition("회원");
 
-		RoleSearchCondition condition = createRoleSearchCondition(0, "회원");
-
-		when(roleQueryService.findRolesWithCondition(any(RoleSearchCondition.class)))
-			.thenReturn(createPage(List.of(roleType1, roleType2)));
+		given(roleQueryService.findRolesWithCondition(any(RoleSearchCondition.class)))
+			.willReturn(createPage(List.of(ROLE_ANONYMOUS, ROLE_MEMBER)));
 
 		// expected
 		mockMvc.perform(get("/admin/api/roles")
@@ -175,6 +164,40 @@ class RoleControllerTest {
 				.content(objectMapper.writeValueAsString(condition)))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("data.size()").value(2));
+	}
+
+	@Test
+	@DisplayName("권한의 id와 새로운 권한 설명을 받아 권한 설명을 수정한다.")
+	void updateRole() throws Exception {
+		// given
+		Role role = createSavedRole(ROLE_ANONYMOUS);
+		RoleUpdateRequest updateRequest = updateRequest("새로운 비회원 설명");
+
+		given(roleQueryService.findById(anyLong()))
+			.willReturn(role);
+
+		// expected
+		mockMvc.perform(patch("/admin/api/roles")
+				.contentType(APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(updateRequest)))
+			.andExpect(status().isOk());
+	}
+
+	@Test
+	@DisplayName("권한 설명을 수정 시 권한 설명은 필수입력이다.")
+	void updateRoleWithNoRoleDesc() throws Exception {
+		// given
+		Role role = createSavedRole(ROLE_ANONYMOUS);
+		RoleUpdateRequest updateRequest = updateRequest(" ");
+
+		given(roleQueryService.findById(anyLong()))
+			.willReturn(role);
+
+		// expected
+		mockMvc.perform(patch("/admin/api/roles")
+				.contentType(APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(updateRequest)))
+			.andExpect(status().isBadRequest());
 	}
 
 	@Test
@@ -223,15 +246,11 @@ class RoleControllerTest {
 			.forEach(role -> roleService.createRole(role.toServiceRequest()));
 	}
 
-	private RoleSearchCondition createRoleSearchCondition(int page, String keyword) {
+	private RoleSearchCondition createRoleSearchCondition(String keyword) {
 		return RoleSearchCondition.builder()
-			.page(page)
+			.page(0)
 			.keyword(keyword)
 			.build();
-	}
-
-	private Page<Role> createPage() {
-		return createPage(List.of());
 	}
 
 	private Page<Role> createPage(List<RoleType> roleTypes) {
@@ -240,5 +259,14 @@ class RoleControllerTest {
 			.toList();
 
 		return new PageImpl<>(roles, Pageable.ofSize(10), 0);
+	}
+
+	private RoleUpdateRequest updateRequest(String roleDesc) {
+		RoleUpdateRequest request = new RoleUpdateRequest();
+
+		request.setId(1L);
+		request.setRoleDesc(roleDesc);
+
+		return request;
 	}
 }

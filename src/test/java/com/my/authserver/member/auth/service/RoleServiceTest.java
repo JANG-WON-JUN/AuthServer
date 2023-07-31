@@ -15,7 +15,9 @@ import com.my.authserver.common.web.exception.dto.RoleAlreadyExists;
 import com.my.authserver.common.web.exception.dto.RoleNotFound;
 import com.my.authserver.domain.entity.member.auth.Role;
 import com.my.authserver.member.auth.repository.RoleRepository;
+import com.my.authserver.member.auth.service.query.RoleQueryService;
 import com.my.authserver.member.auth.service.request.RoleCreateServiceRequest;
+import com.my.authserver.member.auth.service.request.RoleUpdateServiceRequest;
 import com.my.authserver.member.enums.RoleType;
 
 @MyServiceTest
@@ -38,7 +40,7 @@ class RoleServiceTest {
 	void createRole() {
 		// given
 		RoleType roleType = RoleType.ROLE_ANONYMOUS;
-		RoleCreateServiceRequest request = createRequest(roleType, roleType.getRoleDesc());
+		RoleCreateServiceRequest request = createRequest(roleType);
 
 		// when
 		roleService.createRole(request);
@@ -55,7 +57,7 @@ class RoleServiceTest {
 	void createRoleWithExistsRole() {
 		// given
 		RoleType roleType = RoleType.ROLE_ANONYMOUS;
-		RoleCreateServiceRequest request = createRequest(roleType, roleType.getRoleDesc());
+		RoleCreateServiceRequest request = createRequest(roleType);
 
 		roleService.createRole(request);
 
@@ -74,7 +76,7 @@ class RoleServiceTest {
 		// expected
 		assertThatThrownBy(() -> roleService.createRole(request))
 			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage(messageSourceUtils.getMessage("error.noRoleType"));
+			.hasMessage(messageSourceUtils.getMessage("field.required.roleType"));
 	}
 
 	@Test
@@ -86,7 +88,7 @@ class RoleServiceTest {
 		// expected
 		assertThatThrownBy(() -> roleService.createRole(request))
 			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage(messageSourceUtils.getMessage("error.noRoleDesc"));
+			.hasMessage(messageSourceUtils.getMessage("field.required.roleDesc"));
 	}
 
 	@Test
@@ -98,7 +100,7 @@ class RoleServiceTest {
 		// expected
 		assertThatThrownBy(() -> roleService.createRole(request))
 			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage(messageSourceUtils.getMessage("error.noRoleDesc"));
+			.hasMessage(messageSourceUtils.getMessage("field.required.roleDesc"));
 	}
 
 	@Test
@@ -106,7 +108,7 @@ class RoleServiceTest {
 	void deleteRole() {
 		// given
 		RoleType roleType = ROLE_ADMIN;
-		RoleCreateServiceRequest request = createRequest(roleType, roleType.getRoleDesc());
+		RoleCreateServiceRequest request = createRequest(roleType);
 
 		Long savedRoleId = roleService.createRole(request);
 
@@ -120,20 +122,63 @@ class RoleServiceTest {
 	}
 
 	@Test
+	@DisplayName("권한의 id와 새로운 권한 설명을 받아 권한 설명을 수정한다.")
+	void updateRole() {
+		// given
+		RoleType roleType = RoleType.ROLE_ANONYMOUS;
+		String newRoleDesc = "새로운 비회원 설명";
+		RoleCreateServiceRequest request = createRequest(roleType);
+		RoleUpdateServiceRequest updateRequest = updateRequest(newRoleDesc);
+
+		roleService.createRole(request);
+
+		// when
+		Long savedRoleId = roleService.updateRole(updateRequest);
+
+		// then
+		Role savedRole = roleQueryService.findById(savedRoleId);
+		assertThat(savedRole.getRoleDesc()).isEqualTo(newRoleDesc);
+	}
+
+	@Test
+	@DisplayName("권한 설명을 수정 시 권한 설명은 필수입력이다.")
+	void updateRoleWithNoRoleDesc() {
+		// given
+		createRequest(ROLE_ADMIN);
+		RoleUpdateServiceRequest updateRequest = updateRequest(" ");
+
+		// expected
+		assertThatThrownBy(() -> roleService.updateRole(updateRequest))
+			.isInstanceOf(IllegalArgumentException.class)
+			.hasMessage(messageSourceUtils.getMessage("field.required.roleDesc"));
+	}
+
+	@Test
 	@DisplayName("존재하지 않는 권한의 id로 삭제 시 예외가 발생한다.")
 	void deleteRoleWithNoRoleId() {
 		// given
-		Long notExistRoleId = 1L;
+		Long notExistsRoleId = 1L;
 
 		// expected
-		assertThatThrownBy(() -> roleService.deleteRole(notExistRoleId))
+		assertThatThrownBy(() -> roleService.deleteRole(notExistsRoleId))
 			.isInstanceOf(RoleNotFound.class)
 			.hasMessage(messageSourceUtils.getMessage("error.noRole"));
+	}
+
+	private RoleCreateServiceRequest createRequest(RoleType roleType) {
+		return createRequest(roleType, roleType.getRoleDesc());
 	}
 
 	private RoleCreateServiceRequest createRequest(RoleType roleType, String roleDesc) {
 		return RoleCreateServiceRequest.builder()
 			.roleType(roleType)
+			.roleDesc(roleDesc)
+			.build();
+	}
+
+	private RoleUpdateServiceRequest updateRequest(String roleDesc) {
+		return RoleUpdateServiceRequest.builder()
+			.id(1L)
 			.roleDesc(roleDesc)
 			.build();
 	}
