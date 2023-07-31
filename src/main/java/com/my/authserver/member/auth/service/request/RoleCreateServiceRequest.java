@@ -5,8 +5,10 @@ import com.my.authserver.member.enums.RoleType;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor
 public class RoleCreateServiceRequest {
 
 	private RoleType roleType;
