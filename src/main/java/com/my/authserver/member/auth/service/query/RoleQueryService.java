@@ -1,4 +1,4 @@
-package com.my.authserver.member.auth.service;
+package com.my.authserver.member.auth.service.query;
 
 import java.util.Optional;
 
