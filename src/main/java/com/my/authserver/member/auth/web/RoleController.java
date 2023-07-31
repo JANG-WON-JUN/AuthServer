@@ -19,10 +19,11 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.my.authserver.common.web.dto.Result;
 import com.my.authserver.domain.entity.member.auth.Role;
-import com.my.authserver.member.auth.service.RoleQueryService;
 import com.my.authserver.member.auth.service.RoleService;
+import com.my.authserver.member.auth.service.query.RoleQueryService;
 import com.my.authserver.member.web.request.RoleCreateRequest;
 import com.my.authserver.member.web.request.RoleSearchCondition;
+import com.my.authserver.member.web.request.RoleUpdateRequest;
 import com.my.authserver.member.web.response.RoleResponse;
 
 import jakarta.validation.Valid;
@@ -44,7 +45,7 @@ public class RoleController {
 	}
 
 	@GetMapping("/api/roles/{id}")
-	public ResponseEntity<Result> findRole(@PathVariable Long id) {
+	public ResponseEntity<Result<RoleResponse>> findRole(@PathVariable Long id) {
 		Role savedRole = roleQueryService.findById(id);
 		RoleResponse savedRoleResponse = RoleResponse.of(savedRole);
 		return ok(of(savedRoleResponse));
@@ -61,15 +62,15 @@ public class RoleController {
 		return ok(of(roleResponses));
 	}
 
-	@PatchMapping("/api/roles/{id}")
-	public void updateRole() {
-
+	@PatchMapping("/api/roles")
+	public ResponseEntity<Result<Long>> updateRole(@Valid @RequestBody RoleUpdateRequest request) {
+		Long savedRoleId = roleService.updateRole(request.toServiceRequest());
+		return ok(of(savedRoleId));
 	}
 
 	@DeleteMapping("/api/roles/{id}")
-	public ResponseEntity<Void> deleteRole(Long id) {
+	public ResponseEntity<Void> deleteRole(@PathVariable Long id) {
 		roleService.deleteRole(id);
-
 		return ok().build();
 	}
 }
