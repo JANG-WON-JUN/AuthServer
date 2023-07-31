@@ -1,11 +1,6 @@
 package com.my.authserver.common.utils;
 
-import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.types.dsl.BooleanExpression;
-
-import jakarta.servlet.http.Cookie;
-
-import org.springframework.util.ObjectUtils;
+import static java.time.LocalDateTime.*;
 
 import java.time.DateTimeException;
 import java.time.LocalDate;
@@ -14,7 +9,12 @@ import java.util.Arrays;
 import java.util.function.Supplier;
 import java.util.random.RandomGenerator;
 
-import static java.time.LocalDateTime.now;
+import org.springframework.util.ObjectUtils;
+
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.dsl.BooleanExpression;
+
+import jakarta.servlet.http.Cookie;
 
 public class CommonUtils {
 
@@ -40,7 +40,7 @@ public class CommonUtils {
 	public static BooleanBuilder nullSafeBuilder(Supplier<BooleanExpression> f) {
 		try {
 			return new BooleanBuilder(f.get());
-		} catch (IllegalArgumentException e) {
+		} catch (Exception e) {
 			return new BooleanBuilder();
 		}
 	}
