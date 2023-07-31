@@ -3,9 +3,12 @@ package com.my.authserver.member.auth.service;
 import static com.my.authserver.member.enums.RoleType.*;
 import static org.assertj.core.api.Assertions.*;
 
+import java.util.List;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 
 import com.my.authserver.annotation.MyServiceTest;
 import com.my.authserver.common.utils.MessageSourceUtils;
@@ -13,6 +16,7 @@ import com.my.authserver.common.web.exception.dto.RoleNotFound;
 import com.my.authserver.domain.entity.member.auth.Role;
 import com.my.authserver.member.auth.repository.RoleRepository;
 import com.my.authserver.member.enums.RoleType;
+import com.my.authserver.member.web.request.RoleSearchCondition;
 
 @MyServiceTest
 class RoleQueryServiceTest {
@@ -55,7 +59,7 @@ class RoleQueryServiceTest {
 	}
 
 	@Test
-	@DisplayName("권한 id로 권한 객체를 조회할 수 있다.")
+	@DisplayName("권한 아이디로 권한 객체를 조회할 수 있다.")
 	void findById() {
 		// given
 		Long roleId = 1L;
@@ -81,6 +85,59 @@ class RoleQueryServiceTest {
 		assertThatThrownBy(() -> roleQueryService.findById(roleId))
 			.isInstanceOf(RoleNotFound.class)
 			.hasMessage(messageSourceUtils.getMessage("error.noRole"));
+	}
+
+	@Test
+	@DisplayName("조회 조건을 적용하여 권한 목록을 조회한다.")
+	void findRolesWithCondition() {
+		// given
+		RoleType roleType1 = ROLE_ANONYMOUS;
+		RoleType roleType2 = ROLE_MEMBER;
+		RoleType roleType3 = ROLE_ADMIN;
+
+		saveRoles(List.of(roleType1, roleType2, roleType3));
+
+		RoleSearchCondition condition = createRoleSearchCondition(0, null);
+
+		// when
+		Page<Role> page = roleQueryService.findRolesWithCondition(condition);
+
+		// then
+		List<Role> savedRoles = page.getContent();
+
+		assertThat(savedRoles).hasSize(3)
+			.extracting("roleType", "roleDesc")
+			.containsExactlyInAnyOrder(
+				tuple(roleType1, roleType1.getRoleDesc()),
+				tuple(roleType2, roleType2.getRoleDesc()),
+				tuple(roleType3, roleType3.getRoleDesc())
+			);
+	}
+
+	@Test
+	@DisplayName("권한 설명을 조회 조건으로 받아 조건을 만족하는 권한 목록을 조회한다.")
+	void findRolesWithConditionWithKeyword() {
+		// given
+		RoleType roleType1 = ROLE_ANONYMOUS;
+		RoleType roleType2 = ROLE_MEMBER;
+		RoleType roleType3 = ROLE_ADMIN;
+
+		saveRoles(List.of(roleType1, roleType2, roleType3));
+
+		RoleSearchCondition condition = createRoleSearchCondition(0, "회원");
+
+		// when
+		Page<Role> page = roleQueryService.findRolesWithCondition(condition);
+
+		// then
+		List<Role> savedRoles = page.getContent();
+
+		assertThat(savedRoles).hasSize(2)
+			.extracting("roleType", "roleDesc")
+			.containsExactlyInAnyOrder(
+				tuple(roleType1, roleType1.getRoleDesc()),
+				tuple(roleType2, roleType2.getRoleDesc())
+			);
 	}
 
 	@Test
@@ -121,5 +178,18 @@ class RoleQueryServiceTest {
 	private Role saveRole(RoleType roleType, String roleDesc) {
 		Role role = createRole(roleType, roleDesc);
 		return roleRepository.save(role);
+	}
+
+	private void saveRoles(List<RoleType> roleTypes) {
+		roleTypes.stream()
+			.map(roleType -> createRole(roleType, roleType.getRoleDesc()))
+			.forEach(role -> roleRepository.save(role));
+	}
+
+	private RoleSearchCondition createRoleSearchCondition(int page, String keyword) {
+		return RoleSearchCondition.builder()
+			.page(page)
+			.keyword(keyword)
+			.build();
 	}
 }
