@@ -1,5 +1,7 @@
 package com.my.authserver.member.enums;
 
+import static java.util.Comparator.*;
+
 import java.util.Arrays;
 
 import lombok.AllArgsConstructor;
@@ -22,6 +24,14 @@ public enum RoleType {
 			.filter(role -> role.name().equals(roleName))
 			.findFirst()
 			.orElse(ROLE_ANONYMOUS);
+	}
+
+	public static RoleType getTopPriorityRole() {
+		return Arrays.stream(RoleType.values())
+			.sorted(comparingInt(RoleType::getPriority).reversed())
+			.limit(1)
+			.findFirst()
+			.orElse(null);
 	}
 
 	public boolean hasHigherPriorityThan(RoleType roleType) {
