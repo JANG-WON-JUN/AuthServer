@@ -28,7 +28,7 @@ class RoleRepositoryTest {
 		// given
 		RoleType roleType = ROLE_ANONYMOUS;
 
-		Role role1 = createRole(roleType, roleType.getRoleDesc());
+		Role role1 = createRole(roleType);
 
 		roleRepository.save(role1);
 
@@ -61,9 +61,9 @@ class RoleRepositoryTest {
 		RoleType roleType2 = ROLE_MEMBER;
 		RoleType roleType3 = ROLE_ADMIN;
 
-		Role role1 = createRole(roleType1, roleType1.getRoleDesc());
-		Role role2 = createRole(roleType2, roleType2.getRoleDesc());
-		Role role3 = createRole(roleType3, roleType3.getRoleDesc());
+		Role role1 = createRole(roleType1);
+		Role role2 = createRole(roleType2);
+		Role role3 = createRole(roleType3);
 
 		roleRepository.save(role1);
 		roleRepository.save(role2);
@@ -94,9 +94,9 @@ class RoleRepositoryTest {
 		RoleType roleType2 = ROLE_MEMBER;
 		RoleType roleType3 = ROLE_ADMIN;
 
-		Role role1 = createRole(roleType1, roleType1.getRoleDesc());
-		Role role2 = createRole(roleType2, roleType2.getRoleDesc());
-		Role role3 = createRole(roleType3, roleType3.getRoleDesc());
+		Role role1 = createRole(roleType1);
+		Role role2 = createRole(roleType2);
+		Role role3 = createRole(roleType3);
 
 		roleRepository.save(role1);
 		roleRepository.save(role2);
@@ -133,10 +133,10 @@ class RoleRepositoryTest {
 		assertThat(savedRoles).isEmpty();
 	}
 
-	private Role createRole(RoleType roleType, String roleDesc) {
+	private Role createRole(RoleType roleType) {
 		return Role.builder()
 			.roleType(roleType)
-			.roleDesc(roleDesc)
+			.roleDesc(roleType.getRoleDesc())
 			.build();
 	}
 
