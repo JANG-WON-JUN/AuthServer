@@ -11,8 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.my.authserver.annotation.MyServiceTest;
 import com.my.authserver.common.utils.MessageSourceUtils;
-import com.my.authserver.common.web.exception.dto.RoleAlreadyExists;
-import com.my.authserver.common.web.exception.dto.RoleNotFound;
+import com.my.authserver.common.web.exception.RoleAlreadyExists;
+import com.my.authserver.common.web.exception.RoleNotFound;
 import com.my.authserver.domain.entity.member.auth.Role;
 import com.my.authserver.member.auth.repository.RoleRepository;
 import com.my.authserver.member.auth.service.query.RoleQueryService;

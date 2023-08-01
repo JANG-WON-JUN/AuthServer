@@ -5,7 +5,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import com.my.authserver.common.utils.MessageSourceUtils;
-import com.my.authserver.common.web.exception.dto.RoleAlreadyExists;
+import com.my.authserver.common.web.exception.RoleAlreadyExists;
 import com.my.authserver.domain.entity.member.auth.Role;
 import com.my.authserver.member.auth.repository.RoleRepository;
 import com.my.authserver.member.auth.service.query.RoleQueryService;
@@ -38,7 +38,7 @@ public class RoleService {
 
 	public Long updateRole(RoleUpdateServiceRequest request) {
 		Assert.hasText(request.getRoleDesc(), messageSourceUtils.getMessage("field.required.roleDesc"));
-		
+
 		Role savedRole = roleQueryService.findById(request.getId());
 
 		savedRole.changeRoleDesc(request.getRoleDesc());

@@ -25,7 +25,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.my.authserver.common.utils.MessageSourceUtils;
-import com.my.authserver.common.web.exception.dto.RoleNotFound;
+import com.my.authserver.common.web.exception.RoleNotFound;
 import com.my.authserver.domain.entity.member.auth.Role;
 import com.my.authserver.member.auth.service.RoleService;
 import com.my.authserver.member.auth.service.query.RoleQueryService;

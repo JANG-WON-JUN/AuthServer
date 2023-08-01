@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.my.authserver.common.utils.MessageSourceUtils;
-import com.my.authserver.common.web.exception.dto.RoleNotFound;
+import com.my.authserver.common.web.exception.RoleNotFound;
 import com.my.authserver.domain.entity.member.auth.Role;
 import com.my.authserver.member.auth.repository.RoleRepository;
 import com.my.authserver.member.auth.web.request.RoleSearchCondition;
