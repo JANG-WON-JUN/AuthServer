@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.my.authserver.common.web.dto.Result;
 import com.my.authserver.domain.entity.member.auth.Role;
@@ -30,7 +29,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RestControllerAdvice
 @RequiredArgsConstructor
 @RequestMapping("/admin")
 public class RoleController {

@@ -5,9 +5,8 @@ import static org.springframework.http.HttpStatus.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.my.authserver.common.utils.MessageSourceUtils;
 import com.my.authserver.common.web.exception.AuthServerException;
@@ -15,13 +14,12 @@ import com.my.authserver.common.web.exception.dto.ErrorResult;
 
 import lombok.RequiredArgsConstructor;
 
-@ControllerAdvice
+@RestControllerAdvice
 @RequiredArgsConstructor
 public class ExControllerAdvice {
 
 	private final MessageSourceUtils messageSourceUtils;
 
-	@ResponseBody // ExceptionHandler에서 json으로 넘길 때!
 	@ExceptionHandler
 	@SuppressWarnings("ConstantConditions") // @Nullable 제약조건을 suppress할 때 ConstantConditions를 사용한다.
 	public ResponseEntity<ErrorResult> invalidRequestHandler(BindException e) {
@@ -45,7 +43,6 @@ public class ExControllerAdvice {
 		return new ResponseEntity<>(errorResult, BAD_REQUEST);
 	}
 
-	@ResponseBody
 	@ExceptionHandler
 	public ResponseEntity<ErrorResult> commonExHandler(AuthServerException e) {
 		ErrorResult errorResult = ErrorResult.builder()
