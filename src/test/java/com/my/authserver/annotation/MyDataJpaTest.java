@@ -8,11 +8,12 @@ import java.lang.annotation.Target;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 
+import com.my.authserver.config.auditing.JpaAuditingConfig;
 import com.my.authserver.config.querydsl.QueryDslConfig;
 
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @DataJpaTest
-@Import(QueryDslConfig.class)
+@Import({QueryDslConfig.class, JpaAuditingConfig.class})
 public @interface MyDataJpaTest {
 }
