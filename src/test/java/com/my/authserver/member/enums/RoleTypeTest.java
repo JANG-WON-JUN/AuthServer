@@ -103,4 +103,15 @@ class RoleTypeTest {
 		// then
 		assertThat(result).isFalse();
 	}
+
+	@Test
+	@DisplayName("최상위 권한은 어드민이다.")
+	void getTopPriorityRole() {
+		// given
+		// when
+		RoleType topPriorityRole = RoleType.getTopPriorityRole();
+
+		// then
+		assertThat(topPriorityRole).isEqualByComparingTo(ROLE_ADMIN);
+	}
 }
