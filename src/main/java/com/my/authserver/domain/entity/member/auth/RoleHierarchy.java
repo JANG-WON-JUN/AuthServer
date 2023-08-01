@@ -24,15 +24,15 @@ public class RoleHierarchy extends BaseEntity {
 	private Long id;
 
 	@OneToOne
-	private Role child;
-
-	@OneToOne
 	private Role parent;
 
+	@OneToOne
+	private Role child;
+
 	@Builder
-	private RoleHierarchy(Role child, Role parent) {
-		this.child = child;
+	private RoleHierarchy(Role parent, Role child) {
 		this.parent = parent;
+		this.child = child;
 	}
 
 	public static RoleHierarchy create(Role parent, Role child) {

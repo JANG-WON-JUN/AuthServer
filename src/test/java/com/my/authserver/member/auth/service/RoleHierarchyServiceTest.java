@@ -15,6 +15,7 @@ import com.my.authserver.domain.entity.member.auth.Role;
 import com.my.authserver.domain.entity.member.auth.RoleHierarchy;
 import com.my.authserver.member.auth.repository.RoleHierarchyRepository;
 import com.my.authserver.member.auth.repository.RoleRepository;
+import com.my.authserver.member.auth.service.query.RoleHierarchyQueryService;
 import com.my.authserver.member.auth.service.request.RoleHierarchyCreateServiceRequest;
 import com.my.authserver.member.enums.RoleType;
 
@@ -23,6 +24,9 @@ class RoleHierarchyServiceTest {
 
 	@Autowired
 	private RoleHierarchyService roleHierarchyService;
+
+	@Autowired
+	private RoleHierarchyQueryService roleHierarchyQueryService;
 
 	@Autowired
 	private MessageSourceUtils messageSourceUtils;
@@ -41,9 +45,10 @@ class RoleHierarchyServiceTest {
 		RoleHierarchyCreateServiceRequest request = createRoleHierarchy(ROLE_ADMIN, ROLE_MEMBER);
 
 		// when
-		RoleHierarchy savedRoleHierarchy = roleHierarchyService.createRoleHierarchy(request);
+		Long savedRoleHierarchyId = roleHierarchyService.createRoleHierarchy(request);
 
 		// then
+		RoleHierarchy savedRoleHierarchy = roleHierarchyQueryService.findById(savedRoleHierarchyId);
 		assertThat(savedRoleHierarchy.getId()).isNotNull();
 		assertThat(savedRoleHierarchy.getParent().getRoleType()).isEqualByComparingTo(ROLE_ADMIN);
 		assertThat(savedRoleHierarchy.getChild().getRoleType()).isEqualByComparingTo(ROLE_MEMBER);
@@ -57,9 +62,10 @@ class RoleHierarchyServiceTest {
 		RoleHierarchyCreateServiceRequest request = createRoleHierarchy(null, ROLE_ADMIN);
 
 		// when
-		RoleHierarchy savedRoleHierarchy = roleHierarchyService.createRoleHierarchy(request);
+		Long savedRoleHierarchyId = roleHierarchyService.createRoleHierarchy(request);
 
 		// then
+		RoleHierarchy savedRoleHierarchy = roleHierarchyQueryService.findById(savedRoleHierarchyId);
 		assertThat(savedRoleHierarchy.getId()).isNotNull();
 		assertThat(savedRoleHierarchy.getParent()).isNull();
 		assertThat(savedRoleHierarchy.getChild().getRoleType()).isEqualByComparingTo(ROLE_ADMIN);
@@ -114,7 +120,7 @@ class RoleHierarchyServiceTest {
 		// expected
 		assertThatThrownBy(() -> roleHierarchyService.createRoleHierarchy(request))
 			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage(messageSourceUtils.getMessage("field.required.parentRoleType"));
+			.hasMessage(messageSourceUtils.getMessage("field.required.childRoleType"));
 	}
 
 	@Test
@@ -124,7 +130,7 @@ class RoleHierarchyServiceTest {
 		saveRoles();
 		RoleHierarchyCreateServiceRequest request = createRoleHierarchy(null, ROLE_ADMIN);
 
-		Long savedRoleHierarchyId = roleHierarchyService.createRoleHierarchy(request).getId();
+		Long savedRoleHierarchyId = roleHierarchyService.createRoleHierarchy(request);
 
 		// when
 		roleHierarchyService.deleteRoleHierarchy(savedRoleHierarchyId);

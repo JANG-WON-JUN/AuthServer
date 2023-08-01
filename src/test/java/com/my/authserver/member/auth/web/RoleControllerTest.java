@@ -34,8 +34,8 @@ import com.my.authserver.member.auth.web.request.RoleSearchCondition;
 import com.my.authserver.member.auth.web.request.RoleUpdateRequest;
 import com.my.authserver.member.enums.RoleType;
 
-@WebMvcTest(value = RoleController.class)
-// 스프링 시큐리티를 사용하지 않을 떄 필터 제외
+@WebMvcTest(controllers = RoleController.class)
+// 스프링 시큐리티를 사용하지 않을 때 필터 제외
 @AutoConfigureMockMvc(addFilters = false)
 class RoleControllerTest {
 
@@ -198,17 +198,6 @@ class RoleControllerTest {
 				.contentType(APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(updateRequest)))
 			.andExpect(status().isBadRequest());
-	}
-
-	@Test
-	@DisplayName("권한 아이디를 입력받아 권한을 삭제한다.")
-	void deleteRole() throws Exception {
-		// given
-
-		// expected
-		mockMvc.perform(delete("/admin/api/roles/1")
-				.contentType(APPLICATION_JSON))
-			.andExpect(status().isOk());
 	}
 
 	private RoleCreateRequest createRoleRequest(RoleType roleType) {

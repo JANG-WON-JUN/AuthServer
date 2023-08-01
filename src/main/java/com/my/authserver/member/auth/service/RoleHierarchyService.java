@@ -28,7 +28,7 @@ public class RoleHierarchyService {
 	private final RoleHierarchyQueryService roleHierarchyQueryService;
 	private final RoleHierarchyRepository roleHierarchyRepository;
 
-	public RoleHierarchy createRoleHierarchy(RoleHierarchyCreateServiceRequest request) throws RoleHierarchyNotValid {
+	public Long createRoleHierarchy(RoleHierarchyCreateServiceRequest request) throws RoleHierarchyNotValid {
 		RoleType parent = request.getParent();
 		RoleType child = request.getChild();
 
@@ -44,7 +44,7 @@ public class RoleHierarchyService {
 		RoleHierarchy roleHierarchy = RoleHierarchy.create(parentRole, childRole);
 		RoleHierarchy savedRoleHierarchy = roleHierarchyRepository.save(roleHierarchy);
 
-		return savedRoleHierarchy;
+		return savedRoleHierarchy.getId();
 	}
 
 	private boolean isNotValidHierarchy(RoleType parent, RoleType child) {
