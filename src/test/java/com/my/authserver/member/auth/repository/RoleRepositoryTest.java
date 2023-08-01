@@ -13,8 +13,8 @@ import org.springframework.data.domain.Page;
 
 import com.my.authserver.annotation.MyDataJpaTest;
 import com.my.authserver.domain.entity.member.auth.Role;
+import com.my.authserver.member.auth.web.request.RoleSearchCondition;
 import com.my.authserver.member.enums.RoleType;
-import com.my.authserver.member.web.request.RoleSearchCondition;
 
 @MyDataJpaTest
 class RoleRepositoryTest {

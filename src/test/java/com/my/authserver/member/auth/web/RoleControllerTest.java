@@ -29,10 +29,10 @@ import com.my.authserver.common.web.exception.dto.RoleNotFound;
 import com.my.authserver.domain.entity.member.auth.Role;
 import com.my.authserver.member.auth.service.RoleService;
 import com.my.authserver.member.auth.service.query.RoleQueryService;
+import com.my.authserver.member.auth.web.request.RoleCreateRequest;
+import com.my.authserver.member.auth.web.request.RoleSearchCondition;
+import com.my.authserver.member.auth.web.request.RoleUpdateRequest;
 import com.my.authserver.member.enums.RoleType;
-import com.my.authserver.member.web.request.RoleCreateRequest;
-import com.my.authserver.member.web.request.RoleSearchCondition;
-import com.my.authserver.member.web.request.RoleUpdateRequest;
 
 @WebMvcTest(value = RoleController.class)
 // 스프링 시큐리티를 사용하지 않을 떄 필터 제외

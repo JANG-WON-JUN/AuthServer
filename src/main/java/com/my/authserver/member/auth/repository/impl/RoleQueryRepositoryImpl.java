@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import com.my.authserver.domain.entity.member.auth.Role;
 import com.my.authserver.member.auth.repository.RoleQueryRepository;
-import com.my.authserver.member.web.request.RoleSearchCondition;
+import com.my.authserver.member.auth.web.request.RoleSearchCondition;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 

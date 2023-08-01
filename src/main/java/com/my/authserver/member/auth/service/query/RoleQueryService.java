@@ -10,8 +10,8 @@ import com.my.authserver.common.utils.MessageSourceUtils;
 import com.my.authserver.common.web.exception.dto.RoleNotFound;
 import com.my.authserver.domain.entity.member.auth.Role;
 import com.my.authserver.member.auth.repository.RoleRepository;
+import com.my.authserver.member.auth.web.request.RoleSearchCondition;
 import com.my.authserver.member.enums.RoleType;
-import com.my.authserver.member.web.request.RoleSearchCondition;
 
 import lombok.RequiredArgsConstructor;
 

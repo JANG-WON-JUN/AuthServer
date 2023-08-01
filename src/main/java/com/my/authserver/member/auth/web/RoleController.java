@@ -21,10 +21,10 @@ import com.my.authserver.common.web.dto.Result;
 import com.my.authserver.domain.entity.member.auth.Role;
 import com.my.authserver.member.auth.service.RoleService;
 import com.my.authserver.member.auth.service.query.RoleQueryService;
-import com.my.authserver.member.web.request.RoleCreateRequest;
-import com.my.authserver.member.web.request.RoleSearchCondition;
-import com.my.authserver.member.web.request.RoleUpdateRequest;
-import com.my.authserver.member.web.response.RoleResponse;
+import com.my.authserver.member.auth.web.request.RoleCreateRequest;
+import com.my.authserver.member.auth.web.request.RoleSearchCondition;
+import com.my.authserver.member.auth.web.request.RoleUpdateRequest;
+import com.my.authserver.member.auth.web.response.RoleResponse;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

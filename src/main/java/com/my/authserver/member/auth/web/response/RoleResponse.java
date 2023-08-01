@@ -1,4 +1,4 @@
-package com.my.authserver.member.web.response;
+package com.my.authserver.member.auth.web.response;
 
 import com.my.authserver.domain.entity.member.auth.Role;
 import com.my.authserver.member.enums.RoleType;

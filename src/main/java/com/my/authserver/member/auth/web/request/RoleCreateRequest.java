@@ -1,4 +1,4 @@
-package com.my.authserver.member.web.request;
+package com.my.authserver.member.auth.web.request;
 
 import com.my.authserver.member.auth.service.request.RoleCreateServiceRequest;
 import com.my.authserver.member.enums.RoleType;
