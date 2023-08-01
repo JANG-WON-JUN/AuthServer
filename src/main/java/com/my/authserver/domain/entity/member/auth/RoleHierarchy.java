@@ -1,8 +1,15 @@
 package com.my.authserver.domain.entity.member.auth;
 
 import com.my.authserver.domain.entity.BaseEntity;
-import jakarta.persistence.*;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -12,14 +19,26 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class RoleHierarchy extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    @OneToOne
-    private Role child;
+	@OneToOne
+	private Role child;
 
-    @OneToOne
-    private Role parent;
+	@OneToOne
+	private Role parent;
 
+	@Builder
+	private RoleHierarchy(Role child, Role parent) {
+		this.child = child;
+		this.parent = parent;
+	}
+
+	public static RoleHierarchy create(Role parent, Role child) {
+		return RoleHierarchy.builder()
+			.parent(parent)
+			.child(child)
+			.build();
+	}
 }
