@@ -1,10 +1,8 @@
-package com.my.authserver.common.web.exception.dto;
+package com.my.authserver.common.web.exception;
 
 import static org.springframework.http.HttpStatus.*;
 
 import org.springframework.http.HttpStatus;
-
-import com.my.authserver.common.web.exception.AuthServerException;
 
 public class RoleAlreadyExists extends AuthServerException {
 

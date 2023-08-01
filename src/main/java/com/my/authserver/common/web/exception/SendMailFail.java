@@ -1,10 +1,8 @@
-package com.my.authserver.common.web.exception.dto;
+package com.my.authserver.common.web.exception;
 
-import com.my.authserver.common.web.exception.AuthServerException;
+import static org.springframework.http.HttpStatus.*;
 
 import org.springframework.http.HttpStatus;
-
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 public class SendMailFail extends AuthServerException {
 
