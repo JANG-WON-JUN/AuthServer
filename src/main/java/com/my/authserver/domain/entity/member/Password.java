@@ -44,9 +44,7 @@ public class Password extends BaseEntity {
 
 	private int loginFailCount;
 
-	private LocalDateTime loginLockTime;
-
-	private boolean isLocked;
+	private LocalDateTime loginLockTimes;
 
 	@Setter
 	@OneToOne
@@ -54,7 +52,7 @@ public class Password extends BaseEntity {
 	private Member member;
 
 	@Transient
-	private Integer lockLimitMinute;
+	private Integer lockLimitMinutes;
 
 	@Transient
 	private Period changeCycle;
@@ -63,20 +61,20 @@ public class Password extends BaseEntity {
 	private static final int MAX_LOGIN_FAIL_COUNT = 5;
 
 	@Builder
-	private Password(String password, LocalDateTime lastModDateTime, Integer lockLimitMinute, Period changeCycle) {
+	private Password(String password, LocalDateTime lastModDateTime, Integer lockLimitMinutes, Period changeCycle) {
 		this.password = password;
 		this.lastModDateTime = lastModDateTime;
-		this.lockLimitMinute = lockLimitMinute;
+		this.lockLimitMinutes = lockLimitMinutes;
 		this.changeCycle = changeCycle;
 		this.expireDateTime = lastModDateTime.plusMonths(changeCycle.getMonths());
 	}
 
 	public static Password create(String password, LocalDateTime lastModDateTime,
-		Integer lockLimitMinute, Period changeCycle) {
+		Integer lockLimitMinutes, Period changeCycle) {
 		return Password.builder()
 			.password(password)
 			.lastModDateTime(lastModDateTime)
-			.lockLimitMinute(lockLimitMinute)
+			.lockLimitMinutes(lockLimitMinutes)
 			.changeCycle(changeCycle)
 			.build();
 	}
@@ -96,7 +94,7 @@ public class Password extends BaseEntity {
 	}
 
 	public boolean isPossibleLoginCheck() {
-		return loginFailCount < 5 && loginLockTime == null;
+		return loginFailCount < 5 && loginLockTimes == null;
 	}
 
 	public int addLoginFailCount() {
@@ -104,10 +102,10 @@ public class Password extends BaseEntity {
 	}
 
 	public boolean canLoginAt(LocalDateTime currentTime) {
-		if (loginLockTime == null) {
+		if (loginLockTimes == null) {
 			return true;
 		}
-		return between(loginLockTime, currentTime).getSeconds() > 0
+		return between(loginLockTimes, currentTime).getSeconds() > 0
 			&& loginFailCount >= MAX_LOGIN_FAIL_COUNT;
 	}
 
@@ -116,17 +114,20 @@ public class Password extends BaseEntity {
 			return false;
 		}
 
-		loginLockTime = relativeMinuteFromNow(lockLimitMinute);
+		loginLockTimes = relativeMinuteFromNow(lockLimitMinutes);
 		return true;
 	}
 
 	public void loginSuccess() {
 		loginFailCount = 0;
-		loginLockTime = null;
+		loginLockTimes = null;
 	}
 
 	public boolean shouldLocked() {
 		return loginFailCount >= MAX_LOGIN_FAIL_COUNT;
 	}
 
+	public void changePassword(String password) {
+		this.password = password;
+	}
 }
