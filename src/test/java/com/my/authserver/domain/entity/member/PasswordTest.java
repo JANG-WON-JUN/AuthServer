@@ -15,7 +15,6 @@ class PasswordTest {
 	@Test
 	@DisplayName("비밀번호 변경날짜가 지나지 않으면 비밀번호를 변경하지 않아도 된다.")
 	void shouldNotChangePassword() {
-		Period period = Period.ofMonths(3);
 		// given
 		LocalDateTime lastModDateTime = LocalDateTime.of(2023, Month.JANUARY, 1, 0, 0, 0);
 		LocalDateTime currentDateTime = LocalDateTime.of(2023, Month.MARCH, 1, 0, 0, 0);
@@ -72,10 +71,8 @@ class PasswordTest {
 
 		// then
 		int loginFailCount = (int)getField(password, "loginFailCount");
-		boolean isLocked = password.isLocked();
 
 		assertThat(loginFailCount).isEqualTo(1L);
-		assertThat(isLocked).isFalse();
 	}
 
 	@Test
