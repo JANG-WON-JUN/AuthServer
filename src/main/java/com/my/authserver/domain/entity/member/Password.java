@@ -127,7 +127,7 @@ public class Password extends BaseEntity {
 		return loginFailCount >= MAX_LOGIN_FAIL_COUNT;
 	}
 
-	public void changePassword(String password) {
-		this.password = password;
+	public void changePassword(PasswordEncoder passwordEncoder, String password) {
+		this.password = passwordEncoder.encode(password);
 	}
 }

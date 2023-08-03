@@ -10,13 +10,15 @@ public class PasswordUpdateServiceRequest {
 
 	private Long id;
 	private String password;
+	private String newPassword;
 	private String passwordConfirm;
 
 	@Builder
-	private PasswordUpdateServiceRequest(Long id, String password, String passwordConfirm) {
+	private PasswordUpdateServiceRequest(Long id, String password, String newPassword, String passwordConfirm) {
 		// todo 나중에 컨트롤러쪽 updateRequest에서 toServiceRequest로 변환됨
 		this.id = id;
 		this.password = password;
+		this.newPassword = newPassword;
 		this.passwordConfirm = passwordConfirm;
 	}
 

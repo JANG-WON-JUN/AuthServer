@@ -1,10 +1,12 @@
 package com.my.authserver.member.service;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import com.my.authserver.common.utils.MessageSourceUtils;
+import com.my.authserver.common.web.exception.PasswordNotMatched;
 import com.my.authserver.common.web.exception.PasswordNotValid;
 import com.my.authserver.domain.entity.member.Password;
 import com.my.authserver.member.repository.PasswordRepository;
@@ -22,6 +24,7 @@ public class PasswordService {
 	private final PasswordQueryService passwordQueryService;
 	private final MessageSourceUtils messageSourceUtils;
 	private final PasswordRepository passwordRepository;
+	private final PasswordEncoder passwordEncoder;
 
 	public Long createPassword(PasswordCreateServiceRequest request) {
 		Assert.hasText(request.getPassword(), messageSourceUtils.getMessage("field.required.password"));
@@ -29,24 +32,39 @@ public class PasswordService {
 		Assert.notNull(request.getLockLimitMinutes(), messageSourceUtils.getMessage("field.required.lockLimitMinutes"));
 		Assert.notNull(request.getChangeCycle(), messageSourceUtils.getMessage("field.required.changeCycle"));
 
-		Password password = request.toEntity();
-		Password savedPassword = passwordRepository.save(password);
+		Password savedPassword = passwordRepository.save(request.toEntity());
+
+		savedPassword.encodePassword(passwordEncoder);
 
 		return savedPassword.getId();
 	}
 
 	public Long updatePassword(PasswordUpdateServiceRequest request) {
-		Assert.hasText(request.getPassword(), messageSourceUtils.getMessage("field.required.password"));
-
-		if (notMatched(request.getPassword(), request.getPasswordConfirm())) {
-			throw new PasswordNotValid(messageSourceUtils.getMessage("error.notValidPassword"));
-		}
-		
 		Password savedPassword = passwordQueryService.findById(request.getId());
 
-		savedPassword.changePassword(request.getPassword());
+		updateValidCheck(request, savedPassword);
+
+		savedPassword.changePassword(passwordEncoder, request.getNewPassword());
 
 		return savedPassword.getId();
+	}
+
+	private void updateValidCheck(PasswordUpdateServiceRequest request, Password savedPassword) {
+		String oldPassword = request.getPassword();
+		String newPassword = request.getNewPassword();
+		String passwordConfirm = request.getPasswordConfirm();
+
+		Assert.hasText(oldPassword, messageSourceUtils.getMessage("field.required.password"));
+		Assert.hasText(newPassword, messageSourceUtils.getMessage("field.required.newPassword"));
+		Assert.hasText(passwordConfirm, messageSourceUtils.getMessage("field.required.passwordConfirm"));
+
+		if (notMatched(newPassword, passwordConfirm)) {
+			throw new PasswordNotValid(messageSourceUtils.getMessage("error.notValidPassword"));
+		}
+
+		if (!passwordEncoder.matches(oldPassword, savedPassword.getPassword())) {
+			throw new PasswordNotMatched(messageSourceUtils.getMessage("error.passwordNotMatched"));
+		}
 	}
 
 	private boolean notMatched(String password, String passwordConfirm) {
