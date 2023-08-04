@@ -2,6 +2,7 @@ package com.my.authserver.domain.entity.member;
 
 import static com.my.authserver.common.utils.CommonUtils.*;
 import static java.time.Duration.*;
+import static org.springframework.util.StringUtils.*;
 
 import java.time.LocalDateTime;
 import java.time.Period;
@@ -36,7 +37,7 @@ public class Password extends BaseEntity {
 	private Long id;
 
 	@Column(columnDefinition = "char(60)")
-	private String password;
+	private String encodedValue;
 
 	private LocalDateTime lastModDateTime; // 최근 비밀번호 변경 일자
 
@@ -60,26 +61,28 @@ public class Password extends BaseEntity {
 	@Transient
 	private static final int MAX_LOGIN_FAIL_COUNT = 5;
 
+	@Transient
+	private String passwordString;
+
 	@Builder
-	private Password(String password, LocalDateTime lastModDateTime, Integer lockLimitMinutes, Period changeCycle) {
-		this.password = password;
+	private Password(String passwordString, LocalDateTime lastModDateTime, Integer lockLimitMinutes,
+		Period changeCycle) {
+		this.passwordString = passwordString;
 		this.lastModDateTime = lastModDateTime;
 		this.lockLimitMinutes = lockLimitMinutes;
 		this.changeCycle = changeCycle;
 		this.expireDateTime = lastModDateTime.plusMonths(changeCycle.getMonths());
 	}
 
-	public static Password create(String password, LocalDateTime lastModDateTime,
+	public static Password create(String passwordString, LocalDateTime lastModDateTime,
 		Integer lockLimitMinutes, Period changeCycle) {
 		return Password.builder()
-			.password(password)
+			.passwordString(passwordString)
 			.lastModDateTime(lastModDateTime)
 			.lockLimitMinutes(lockLimitMinutes)
 			.changeCycle(changeCycle)
 			.build();
 	}
-
-	// 비밀번호 변경되어야 할 날짜
 
 	public boolean shouldChangePassword(LocalDateTime current) {
 		return current.isAfter(expireDateTime);
@@ -90,7 +93,9 @@ public class Password extends BaseEntity {
 	}
 
 	public void encodePassword(PasswordEncoder passwordEncoder) {
-		password = passwordEncoder.encode(password);
+		if (hasText(passwordString)) {
+			encodedValue = passwordEncoder.encode(passwordString);
+		}
 	}
 
 	public boolean isPossibleLoginCheck() {
@@ -128,6 +133,7 @@ public class Password extends BaseEntity {
 	}
 
 	public void changePassword(PasswordEncoder passwordEncoder, String password) {
-		this.password = passwordEncoder.encode(password);
+		this.passwordString = password;
+		encodePassword(passwordEncoder);
 	}
 }

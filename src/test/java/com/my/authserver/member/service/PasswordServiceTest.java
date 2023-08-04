@@ -59,7 +59,7 @@ class PasswordServiceTest {
 
 		// then
 		Password savedPassword = passwordQueryService.findById(savedPasswordId);
-		assertThat(passwordEncoder.matches(password, savedPassword.getPassword())).isTrue();
+		assertThat(passwordEncoder.matches(password, savedPassword.getEncodedValue())).isTrue();
 	}
 
 	@Test
@@ -117,7 +117,7 @@ class PasswordServiceTest {
 		String password = "myPassword";
 		String newPassword = "새로운 비밀번호";
 		Long passwordId = passwordService.createPassword(create(password, MIN, 1, ZERO));
-		PasswordUpdateServiceRequest request = updateCreate(passwordId, password, newPassword, newPassword);
+		PasswordUpdateServiceRequest request = updateCreate(passwordId, password, newPassword);
 
 		// when
 		Long savedPasswordId = passwordService.updatePassword(request);
@@ -126,7 +126,7 @@ class PasswordServiceTest {
 		Password updatedPassword = passwordQueryService.findById(savedPasswordId);
 
 		assertThat(updatedPassword.getId()).isEqualTo(passwordId);
-		assertThat(passwordEncoder.matches(newPassword, updatedPassword.getPassword())).isTrue();
+		assertThat(passwordEncoder.matches(newPassword, updatedPassword.getEncodedValue())).isTrue();
 	}
 
 	@Test
@@ -134,7 +134,7 @@ class PasswordServiceTest {
 	void updatePasswordWithNoPrevPassword() {
 		// given
 		Long passwordId = passwordService.createPassword(create("myPassword", MIN, 1, ZERO));
-		PasswordUpdateServiceRequest request = updateCreate(passwordId, "  ", "새로운 비밀번호", "새로운 비밀번호");
+		PasswordUpdateServiceRequest request = updateCreate(passwordId, "  ", "새로운 비밀번호");
 
 		// expected
 		assertThatThrownBy(() -> passwordService.updatePassword(request))
@@ -147,7 +147,7 @@ class PasswordServiceTest {
 	void updatePasswordWithNoNewPassword() {
 		// given
 		Long passwordId = passwordService.createPassword(create("myPassword", MIN, 1, ZERO));
-		PasswordUpdateServiceRequest request = updateCreate(passwordId, "기존 비밀번호", "  ", "새로운 비밀번호");
+		PasswordUpdateServiceRequest request = updateCreate(passwordId, "기존 비밀번호", "  ");
 
 		// expected
 		assertThatThrownBy(() -> passwordService.updatePassword(request))
@@ -156,24 +156,11 @@ class PasswordServiceTest {
 	}
 
 	@Test
-	@DisplayName("비밀번호 변경 시 비멀번호 확인 입력은 필수 입력이다.")
-	void updatePasswordWithNoPasswordConfirm() {
-		// given
-		Long passwordId = passwordService.createPassword(create("myPassword", MIN, 1, ZERO));
-		PasswordUpdateServiceRequest request = updateCreate(passwordId, "기존 비밀번호", "새로운 비밀번호", "");
-
-		// expected
-		assertThatThrownBy(() -> passwordService.updatePassword(request))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage(messageSourceUtils.getMessage("field.required.passwordConfirm"));
-	}
-
-	@Test
 	@DisplayName("비밀번호 변경 시 기존 비멀번호와 일치하지 않으면 변경할 수 없다.")
 	void updatePasswordWithNotMatchedPrevPassword() {
 		// given
 		Long passwordId = passwordService.createPassword(create("myPassword", MIN, 1, ZERO));
-		PasswordUpdateServiceRequest request = updateCreate(passwordId, "엉뚱한 비밀번호", "새로운 비밀번호", "새로운 비밀번호");
+		PasswordUpdateServiceRequest request = updateCreate(passwordId, "엉뚱한 비밀번호", "새로운 비밀번호");
 
 		// expected
 		assertThatThrownBy(() -> passwordService.updatePassword(request))
@@ -181,13 +168,11 @@ class PasswordServiceTest {
 			.hasMessage(messageSourceUtils.getMessage("error.passwordNotMatched"));
 	}
 
-	private PasswordUpdateServiceRequest updateCreate(Long id, String password,
-		String newPassword, String passwordConfirm) {
+	private PasswordUpdateServiceRequest updateCreate(Long id, String password, String newPassword) {
 		return PasswordUpdateServiceRequest.builder()
 			.id(id)
 			.password(password)
 			.newPassword(newPassword)
-			.passwordConfirm(passwordConfirm)
 			.build();
 	}
 }

@@ -7,7 +7,6 @@ import org.springframework.util.Assert;
 
 import com.my.authserver.common.utils.MessageSourceUtils;
 import com.my.authserver.common.web.exception.PasswordNotMatched;
-import com.my.authserver.common.web.exception.PasswordNotValid;
 import com.my.authserver.domain.entity.member.Password;
 import com.my.authserver.member.repository.PasswordRepository;
 import com.my.authserver.member.service.query.PasswordQueryService;
@@ -40,34 +39,21 @@ public class PasswordService {
 	}
 
 	public Long updatePassword(PasswordUpdateServiceRequest request) {
+		String oldPassword = request.getPassword();
+		String newPassword = request.getNewPassword();
+
+		Assert.hasText(oldPassword, messageSourceUtils.getMessage("field.required.password"));
+		Assert.hasText(newPassword, messageSourceUtils.getMessage("field.required.newPassword"));
+
 		Password savedPassword = passwordQueryService.findById(request.getId());
 
-		updateValidCheck(request, savedPassword);
+		if (!passwordEncoder.matches(oldPassword, savedPassword.getEncodedValue())) {
+			throw new PasswordNotMatched(messageSourceUtils.getMessage("error.passwordNotMatched"));
+		}
 
 		savedPassword.changePassword(passwordEncoder, request.getNewPassword());
 
 		return savedPassword.getId();
 	}
 
-	private void updateValidCheck(PasswordUpdateServiceRequest request, Password savedPassword) {
-		String oldPassword = request.getPassword();
-		String newPassword = request.getNewPassword();
-		String passwordConfirm = request.getPasswordConfirm();
-
-		Assert.hasText(oldPassword, messageSourceUtils.getMessage("field.required.password"));
-		Assert.hasText(newPassword, messageSourceUtils.getMessage("field.required.newPassword"));
-		Assert.hasText(passwordConfirm, messageSourceUtils.getMessage("field.required.passwordConfirm"));
-
-		if (notMatched(newPassword, passwordConfirm)) {
-			throw new PasswordNotValid(messageSourceUtils.getMessage("error.notValidPassword"));
-		}
-
-		if (!passwordEncoder.matches(oldPassword, savedPassword.getPassword())) {
-			throw new PasswordNotMatched(messageSourceUtils.getMessage("error.passwordNotMatched"));
-		}
-	}
-
-	private boolean notMatched(String password, String passwordConfirm) {
-		return !password.equals(passwordConfirm);
-	}
 }

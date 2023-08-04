@@ -39,7 +39,7 @@ public class PasswordCreateServiceRequest {
 
 	public Password toEntity() {
 		return Password.builder()
-			.password(password)
+			.passwordString(password)
 			.lockLimitMinutes(lockLimitMinutes)
 			.lastModDateTime(lastModDateTime)
 			.changeCycle(changeCycle)
