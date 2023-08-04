@@ -67,7 +67,7 @@ class RoleHierarchyControllerTest {
 	}
 
 	@Test
-	@DisplayName("권한 계층 생성 시 상위권한, 하위권한이 모두 null이면 예외가 발생한다.")
+	@DisplayName("권한 계층 생성 시 상위권한, 하위권한이 모두 입력되지 않으면 생성할 수 없다.")
 	void createRoleHierarchyWithNoRole() throws Exception {
 		// given
 		RoleHierarchyCreateRequest request = createRoleHierarchyRequest(null, null);
@@ -84,7 +84,7 @@ class RoleHierarchyControllerTest {
 	}
 
 	@Test
-	@DisplayName("권한 계층 전체 조회 시 데이터가 존재하면 리스트로 반환한다.")
+	@DisplayName("권한 계층 목록을 조회할 수 있다")
 	void findRoleHierarchies() throws Exception {
 		// given
 		Role parent = createRole(ROLE_ADMIN);
@@ -105,7 +105,7 @@ class RoleHierarchyControllerTest {
 	}
 
 	@Test
-	@DisplayName("권한 계층 전체 조회 시 데이터가 존재하지 않으면 비어있는 리스트를 반환한다.")
+	@DisplayName("권한 계층 전체 조회 시 데이터가 존재하지 않으면 조회결과는 없다.")
 	void findRoleHierarchiesWithNoRoleHierarchy() throws Exception {
 		// given
 		given(roleHierarchyQueryService.findRoleHierarchies())

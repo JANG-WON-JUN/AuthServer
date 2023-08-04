@@ -53,7 +53,7 @@ class RoleServiceTest {
 	}
 
 	@Test
-	@DisplayName("이미 존재하는 권한을 생성하려하면 예외가 발생한다.")
+	@DisplayName("이미 존재하는 권한은 생성할 수 없다.")
 	void createRoleWithExistsRole() {
 		// given
 		RoleType roleType = RoleType.ROLE_ANONYMOUS;
@@ -68,7 +68,7 @@ class RoleServiceTest {
 	}
 
 	@Test
-	@DisplayName("권한 생성 시 권한 타입이 없으면 예외를 발생시킨다.")
+	@DisplayName("권한 생성 시 권한 타입은 필수 입력이다.")
 	void createRoleWithNoRoleType() {
 		// given
 		RoleCreateServiceRequest request = createRequest(null, "권한 설명");
@@ -80,7 +80,7 @@ class RoleServiceTest {
 	}
 
 	@Test
-	@DisplayName("권한 생성 시 권한 설명이 없으면 예외를 발생시킨다.")
+	@DisplayName("권한 생성 시 권한 설명은 필수 입력이다.")
 	void createRoleWithNoRoleDesc() {
 		// given
 		RoleCreateServiceRequest request = createRequest(ROLE_ADMIN, null);
@@ -92,7 +92,7 @@ class RoleServiceTest {
 	}
 
 	@Test
-	@DisplayName("권한 생성 시 권한 설명이 빈값이거나 공백이면 예외를 발생시킨다.")
+	@DisplayName("권한 생성 시 권한 설명에 공백이나 빈 문자열을 입력할 수 없다.")
 	void createRoleWithWhiteSpaceRoleDesc() {
 		// given
 		RoleCreateServiceRequest request = createRequest(ROLE_ADMIN, " ");
@@ -154,7 +154,7 @@ class RoleServiceTest {
 	}
 
 	@Test
-	@DisplayName("존재하지 않는 권한의 id로 삭제 시 예외가 발생한다.")
+	@DisplayName("존재하지 않는 권한의 id로 권한을 삭제할 수 없다.")
 	void deleteRoleWithNoRoleId() {
 		// given
 		Long notExistsRoleId = 1L;

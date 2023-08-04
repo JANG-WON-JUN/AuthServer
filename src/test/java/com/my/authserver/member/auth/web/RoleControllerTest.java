@@ -69,7 +69,7 @@ class RoleControllerTest {
 	}
 
 	@Test
-	@DisplayName("권한 생성 시 권한 타입이 입력되지 않으면 예외가 발생한다.")
+	@DisplayName("권한 생성 시 권한 타입은 필수 입력이다.")
 	void createRoleWithNoRoleType() throws Exception {
 		// given
 		RoleCreateRequest request = createRoleRequest(null, "권한 설명");
@@ -83,7 +83,7 @@ class RoleControllerTest {
 	}
 
 	@Test
-	@DisplayName("권한 생성 시 권한 설명이 입력하지 않으면 예외가 발생한다.")
+	@DisplayName("권한 생성 시 권한 설명은 필수 입력이다.")
 	void createRoleWithNoRoleDesc() throws Exception {
 		// given
 		RoleCreateRequest request = createRoleRequest(ROLE_ADMIN, "   ");
@@ -114,7 +114,7 @@ class RoleControllerTest {
 	}
 
 	@Test
-	@DisplayName("존재하지 않는 권한 아이디를 입력받아 권한 1개를 조회하면 예외가 발생한다.")
+	@DisplayName("권한 아이디로 권한 객체 조회 시 존재하지 않는 권한을 조회할 수 없다.")
 	void findRoleWithNoId() throws Exception {
 		// given
 		given(roleQueryService.findById(anyLong()))

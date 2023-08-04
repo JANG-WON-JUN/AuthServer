@@ -105,7 +105,7 @@ class RoleTypeTest {
 	}
 
 	@Test
-	@DisplayName("최상위 권한은 어드민이다.")
+	@DisplayName("최상위 권한은 관리자이다.")
 	void getTopPriorityRole() {
 		// given
 		// when

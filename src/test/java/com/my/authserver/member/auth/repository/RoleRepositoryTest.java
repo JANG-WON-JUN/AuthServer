@@ -41,7 +41,7 @@ class RoleRepositoryTest {
 	}
 
 	@Test
-	@DisplayName("권한 이름으로 권한 객체 조회 시 권한이 없으면 비어있는 optional을 반환한다.")
+	@DisplayName("권한 이름으로 권한 조회 시 권한이 존재하지 않으면 조회할 수 없다.")
 	void findByRoleNameWithNoRole() {
 		// given
 		RoleType roleType = ROLE_ANONYMOUS;
@@ -119,7 +119,7 @@ class RoleRepositoryTest {
 	}
 
 	@Test
-	@DisplayName("권한이 조회되지 않는 페이지 번호를 가지고 권한 목록을 조회 시 비어있는 리스트롤 반환한다.")
+	@DisplayName("권한 목록이 조회되지 않는 페이지 번호를 가지고 권한 목록을 조회 시 조회결과는 없다.")
 	void findRolesWithConditionWithInvalidPage() {
 		// given
 		RoleSearchCondition condition = createRoleSearchCondition(0, null);

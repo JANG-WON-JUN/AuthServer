@@ -16,7 +16,7 @@ class MemberRepositoryTest {
 	private MemberRepository memberRepository;
 
 	@Test
-	@DisplayName("이메일로 회원을 조회 시 회원이 존재하면 화원 정보를 조회한다.")
+	@DisplayName("이메일로 회원을 조회할 수 있다.")
 	void findByEmail() {
 		// given
 		String email = "admin@gmail.com";
@@ -33,7 +33,7 @@ class MemberRepositoryTest {
 	}
 
 	@Test
-	@DisplayName("이메일로 회원을 조회 시 회원이 존재하지 않으면 null을 반환한다.")
+	@DisplayName("이메일로 회원을 조회 시 회원이 존재하지 않으면 조회할 수 없다.")
 	void findByEmailWithNoMember() {
 		// given
 		String email = "admin@gmail.com";

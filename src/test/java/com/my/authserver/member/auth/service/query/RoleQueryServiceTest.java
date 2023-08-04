@@ -47,7 +47,7 @@ class RoleQueryServiceTest {
 	}
 
 	@Test
-	@DisplayName("권한 이름으로 권한 객체 조회 시 권한이 없으면 예외를 발생시킨다.")
+	@DisplayName("권한 이름으로 권한 객체 조회 시 존재하지 않는 권한을 조회할 수 없다.")
 	void findByRoleNameWithNoRole() {
 		// given
 		RoleType roleType = ROLE_ANONYMOUS;
@@ -76,7 +76,7 @@ class RoleQueryServiceTest {
 	}
 
 	@Test
-	@DisplayName("권한 아이디로 권한 객체 조회 시 권한이 없으면 예외를 발생시킨다.")
+	@DisplayName("권한 아이디로 권한 객체 조회 시 존재하지 않는 권한을 조회할 수 없다.")
 	void findByIdWithNoRole() {
 		// given
 		Long roleId = 1L;

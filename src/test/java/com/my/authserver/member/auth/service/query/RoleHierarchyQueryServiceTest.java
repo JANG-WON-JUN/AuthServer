@@ -56,7 +56,7 @@ class RoleHierarchyQueryServiceTest {
 	}
 
 	@Test
-	@DisplayName("존재하지 않는 권한 계층 아이디로 권한 계층 객체를 조회 시 예외가 발생한다.")
+	@DisplayName("존재하지 않는 권한 계층 아이디로 권한 계층 데이터를 조회할 수 없다.")
 	void findByIdWithNoId() {
 		// given
 
@@ -87,7 +87,7 @@ class RoleHierarchyQueryServiceTest {
 	}
 
 	@Test
-	@DisplayName("권한 계층을 전체 조회할 시 데이터가 없으면 비어있는 리스트를 반환한다.")
+	@DisplayName("권한 계층을 전체 조회할 시 데이터가 없으면 조회결과는 없다.")
 	void findRoleHierarchiesWithEmptyList() {
 		// given
 
