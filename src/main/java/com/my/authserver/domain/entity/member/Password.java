@@ -1,18 +1,30 @@
 package com.my.authserver.domain.entity.member;
 
-import com.my.authserver.domain.entity.BaseEntity;
+import static com.my.authserver.common.utils.CommonUtils.*;
+import static java.time.Duration.*;
+import static org.springframework.util.StringUtils.*;
 
-import jakarta.persistence.*;
-import lombok.*;
+import java.time.LocalDateTime;
+import java.time.Period;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.time.LocalDateTime;
+import com.my.authserver.domain.entity.BaseEntity;
 
-import static com.my.authserver.common.utils.CommonUtils.relativeMinuteFromNow;
-import static com.my.authserver.common.utils.CommonUtils.relativeMonthFromNow;
-import static java.time.Duration.between;
-import static java.time.LocalDateTime.now;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "PASSWORD_TB")
@@ -25,83 +37,103 @@ public class Password extends BaseEntity {
 	private Long id;
 
 	@Column(columnDefinition = "char(60)")
-	private String password;
+	private String encodedValue;
 
-	private LocalDateTime beChangedDate; // 비밀번호가 변경되어야 하는 날짜
+	private LocalDateTime lastModDateTime; // 최근 비밀번호 변경 일자
+
+	private LocalDateTime expireDateTime; // 비밀번호가 변경되어야 하는 날짜
 
 	private int loginFailCount;
 
-	private LocalDateTime loginLockTime;
+	private LocalDateTime loginLockTimes;
 
 	@Setter
 	@OneToOne
 	@JoinColumn(referencedColumnName = "id")
 	private Member member;
 
+	@Transient
+	private Integer lockLimitMinutes;
+
+	@Transient
+	private Period changeCycle;
+
+	@Transient
+	private static final int MAX_LOGIN_FAIL_COUNT = 5;
+
+	@Transient
+	private String passwordString;
+
 	@Builder
-	public Password(String password) {
-		this.password = password;
+	private Password(String passwordString, LocalDateTime lastModDateTime, Integer lockLimitMinutes,
+		Period changeCycle) {
+		this.passwordString = passwordString;
+		this.lastModDateTime = lastModDateTime;
+		this.lockLimitMinutes = lockLimitMinutes;
+		this.changeCycle = changeCycle;
+		this.expireDateTime = lastModDateTime.plusMonths(changeCycle.getMonths());
 	}
 
-	@Transient
-	private final Integer LOGIN_LOCK_LIMIT_MINUTE = 1;
+	public static Password create(String passwordString, LocalDateTime lastModDateTime,
+		Integer lockLimitMinutes, Period changeCycle) {
+		return Password.builder()
+			.passwordString(passwordString)
+			.lastModDateTime(lastModDateTime)
+			.lockLimitMinutes(lockLimitMinutes)
+			.changeCycle(changeCycle)
+			.build();
+	}
 
-	@Transient
-	private final Integer PASSWORD_CHANGE_PERIOD = 3;
+	public boolean shouldChangePassword(LocalDateTime current) {
+		return current.isAfter(expireDateTime);
+	}
 
-	public void extendBeChangedDate() {
-		this.beChangedDate = relativeMonthFromNow(PASSWORD_CHANGE_PERIOD);
+	public void extendExpireDate() {
+		this.expireDateTime = relativeMonthFromNow(changeCycle.getMonths());
 	}
 
 	public void encodePassword(PasswordEncoder passwordEncoder) {
-		password = passwordEncoder.encode(password);
+		if (hasText(passwordString)) {
+			encodedValue = passwordEncoder.encode(passwordString);
+		}
 	}
 
 	public boolean isPossibleLoginCheck() {
-		return loginFailCount < 5 && loginLockTime == null;
+		return loginFailCount < 5 && loginLockTimes == null;
 	}
 
 	public int addLoginFailCount() {
 		return ++loginFailCount;
 	}
 
-	public void loginLock() {
-		if (loginFailCount < 5) {
-			return;
-		}
-
-		loginLockTime = relativeMinuteFromNow(LOGIN_LOCK_LIMIT_MINUTE);
-	}
-
-	public boolean isLoginLocked() {
-		return loginFailCount >= 5;
-	}
-
-	public boolean isReleasableLoginLock() {
-		return isReleasableLoginLock(now());
-	}
-
-	public boolean isReleasableLoginLock(LocalDateTime time) {
-		if (loginLockTime == null) {
+	public boolean canLoginAt(LocalDateTime currentTime) {
+		if (loginLockTimes == null) {
 			return true;
 		}
-		return between(loginLockTime, time).getSeconds() > 0
-			&& loginFailCount >= 5;
+		return between(loginLockTimes, currentTime).getSeconds() > 0
+			&& loginFailCount >= MAX_LOGIN_FAIL_COUNT;
 	}
 
-	public void releaseLoginLock() {
+	public boolean lock() {
+		if (loginFailCount < MAX_LOGIN_FAIL_COUNT) {
+			return false;
+		}
+
+		loginLockTimes = relativeMinuteFromNow(lockLimitMinutes);
+		return true;
+	}
+
+	public void loginSuccess() {
 		loginFailCount = 0;
-		loginLockTime = null;
+		loginLockTimes = null;
 	}
 
-	public boolean isRequiredPasswordChanged() {
-		return isRequiredPasswordChanged(now());
+	public boolean shouldLocked() {
+		return loginFailCount >= MAX_LOGIN_FAIL_COUNT;
 	}
 
-	public boolean isRequiredPasswordChanged(LocalDateTime time) {
-		if (time == null) {
-			return true;
-		}
-		return between(beChangedDate, time).getSeconds() > 0;
+	public void changePassword(PasswordEncoder passwordEncoder, String password) {
+		this.passwordString = password;
+		encodePassword(passwordEncoder);
 	}
 }
