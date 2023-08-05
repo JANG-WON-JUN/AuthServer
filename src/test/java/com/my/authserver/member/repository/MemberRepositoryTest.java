@@ -4,16 +4,11 @@ import static org.assertj.core.api.Assertions.*;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import com.my.authserver.annotation.MyDataJpaTest;
 import com.my.authserver.domain.entity.member.Member;
+import com.my.authserver.support.repository.RepositoryTestSupport;
 
-@MyDataJpaTest
-class MemberRepositoryTest {
-
-	@Autowired
-	private MemberRepository memberRepository;
+class MemberRepositoryTest extends RepositoryTestSupport {
 
 	@Test
 	@DisplayName("이메일로 회원을 조회할 수 있다.")

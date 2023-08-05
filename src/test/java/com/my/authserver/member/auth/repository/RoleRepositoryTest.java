@@ -8,19 +8,14 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 
-import com.my.authserver.annotation.MyDataJpaTest;
 import com.my.authserver.domain.entity.member.auth.Role;
 import com.my.authserver.member.auth.web.request.RoleSearchCondition;
 import com.my.authserver.member.enums.RoleType;
+import com.my.authserver.support.repository.RepositoryTestSupport;
 
-@MyDataJpaTest
-class RoleRepositoryTest {
-
-	@Autowired
-	private RoleRepository roleRepository;
+class RoleRepositoryTest extends RepositoryTestSupport {
 
 	@Test
 	@DisplayName("권한 이름으로 권한 객체를 조회할 수 있다.")

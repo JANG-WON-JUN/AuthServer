@@ -14,45 +14,19 @@ import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.test.web.servlet.MockMvc;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.my.authserver.common.utils.MessageSourceUtils;
 import com.my.authserver.common.web.exception.RoleNotFound;
 import com.my.authserver.domain.entity.member.auth.Role;
-import com.my.authserver.member.auth.service.RoleService;
-import com.my.authserver.member.auth.service.query.RoleQueryService;
 import com.my.authserver.member.auth.web.request.RoleCreateRequest;
 import com.my.authserver.member.auth.web.request.RoleSearchCondition;
 import com.my.authserver.member.auth.web.request.RoleUpdateRequest;
 import com.my.authserver.member.enums.RoleType;
+import com.my.authserver.support.controller.ControllerTestSupport;
 
-@WebMvcTest(controllers = RoleController.class)
-// 스프링 시큐리티를 사용하지 않을 때 필터 제외
-@AutoConfigureMockMvc(addFilters = false)
-class RoleControllerTest {
-
-	@Autowired
-	private MockMvc mockMvc;
-
-	@Autowired
-	private ObjectMapper objectMapper;
-
-	@MockBean
-	private RoleService roleService;
-
-	@MockBean
-	private RoleQueryService roleQueryService;
-
-	@MockBean
-	private MessageSourceUtils messageSourceUtils;
+class RoleControllerTest extends ControllerTestSupport {
 
 	@Test
 	@DisplayName("권한 생성 시 필요한 정보를 받아 권한을 생성한다.")

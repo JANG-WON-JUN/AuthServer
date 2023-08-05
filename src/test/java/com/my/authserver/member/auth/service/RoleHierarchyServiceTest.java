@@ -5,37 +5,16 @@ import static org.assertj.core.api.Assertions.*;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import com.my.authserver.annotation.MyServiceTest;
-import com.my.authserver.common.utils.MessageSourceUtils;
 import com.my.authserver.common.web.exception.RoleHierarchyNotFound;
 import com.my.authserver.common.web.exception.RoleHierarchyNotValid;
 import com.my.authserver.domain.entity.member.auth.Role;
 import com.my.authserver.domain.entity.member.auth.RoleHierarchy;
-import com.my.authserver.member.auth.repository.RoleHierarchyRepository;
-import com.my.authserver.member.auth.repository.RoleRepository;
-import com.my.authserver.member.auth.service.query.RoleHierarchyQueryService;
 import com.my.authserver.member.auth.service.request.RoleHierarchyCreateServiceRequest;
 import com.my.authserver.member.enums.RoleType;
+import com.my.authserver.support.service.ServiceTestSupport;
 
-@MyServiceTest
-class RoleHierarchyServiceTest {
-
-	@Autowired
-	private RoleHierarchyService roleHierarchyService;
-
-	@Autowired
-	private RoleHierarchyQueryService roleHierarchyQueryService;
-
-	@Autowired
-	private MessageSourceUtils messageSourceUtils;
-
-	@Autowired
-	private RoleHierarchyRepository roleHierarchyRepository;
-
-	@Autowired
-	private RoleRepository roleRepository;
+class RoleHierarchyServiceTest extends ServiceTestSupport {
 
 	@Test
 	@DisplayName("관리자 권한과 회원 권한을 입력받아 권한 계층을 생성한다.")

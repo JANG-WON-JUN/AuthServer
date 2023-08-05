@@ -7,28 +7,15 @@ import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 
-import com.my.authserver.annotation.MyServiceTest;
-import com.my.authserver.common.utils.MessageSourceUtils;
 import com.my.authserver.common.web.exception.RoleNotFound;
 import com.my.authserver.domain.entity.member.auth.Role;
-import com.my.authserver.member.auth.repository.RoleRepository;
 import com.my.authserver.member.auth.web.request.RoleSearchCondition;
 import com.my.authserver.member.enums.RoleType;
+import com.my.authserver.support.service.ServiceTestSupport;
 
-@MyServiceTest
-class RoleQueryServiceTest {
-
-	@Autowired
-	private RoleQueryService roleQueryService;
-
-	@Autowired
-	private MessageSourceUtils messageSourceUtils;
-
-	@Autowired
-	private RoleRepository roleRepository;
+class RoleQueryServiceTest extends ServiceTestSupport {
 
 	@Test
 	@DisplayName("권한 이름으로 권한 객체를 조회할 수 있다.")
@@ -62,16 +49,15 @@ class RoleQueryServiceTest {
 	@DisplayName("권한 아이디로 권한 객체를 조회할 수 있다.")
 	void findById() {
 		// given
-		Long roleId = 1L;
 		RoleType roleType = ROLE_ANONYMOUS;
 
-		saveRole(roleType, roleType.getRoleDesc());
+		Long savedRoleId = saveRole(roleType, roleType.getRoleDesc());
 
 		// when
-		Role savedRole = roleQueryService.findById(roleId);
+		Role savedRole = roleQueryService.findById(savedRoleId);
 
 		// then
-		assertThat(savedRole.getId()).isEqualTo(roleId);
+		assertThat(savedRole.getId()).isEqualTo(savedRoleId);
 		assertThat(savedRole.getRoleType()).isEqualByComparingTo(roleType);
 	}
 
@@ -175,9 +161,9 @@ class RoleQueryServiceTest {
 			.build();
 	}
 
-	private Role saveRole(RoleType roleType, String roleDesc) {
+	private Long saveRole(RoleType roleType, String roleDesc) {
 		Role role = createRole(roleType, roleDesc);
-		return roleRepository.save(role);
+		return roleRepository.save(role).getId();
 	}
 
 	private void saveRoles(List<RoleType> roleTypes) {

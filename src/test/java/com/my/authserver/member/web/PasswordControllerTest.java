@@ -13,44 +13,14 @@ import java.time.Period;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.test.web.servlet.MockMvc;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.my.authserver.common.utils.MessageSourceUtils;
 import com.my.authserver.common.web.exception.PasswordNotFound;
 import com.my.authserver.domain.entity.member.Password;
-import com.my.authserver.member.service.PasswordService;
-import com.my.authserver.member.service.query.PasswordQueryService;
 import com.my.authserver.member.service.request.PasswordUpdateServiceRequest;
 import com.my.authserver.member.web.request.PasswordUpdateRequest;
+import com.my.authserver.support.controller.ControllerTestSupport;
 
-@WebMvcTest(controllers = PasswordController.class)
-// 스프링 시큐리티를 사용하지 않을 때 필터 제외
-@AutoConfigureMockMvc(addFilters = false)
-class PasswordControllerTest {
-
-	@Autowired
-	private MockMvc mockMvc;
-
-	@Autowired
-	private ObjectMapper objectMapper;
-
-	@MockBean
-	private PasswordEncoder passwordEncoder;
-
-	@MockBean
-	private PasswordService passwordService;
-
-	@MockBean
-	private PasswordQueryService passwordQueryService;
-
-	@MockBean
-	private MessageSourceUtils messageSourceUtils;
+class PasswordControllerTest extends ControllerTestSupport {
 
 	@Test
 	@DisplayName("아이디로 패스워드를 조회한다.")
