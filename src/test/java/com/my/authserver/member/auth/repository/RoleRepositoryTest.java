@@ -64,7 +64,7 @@ class RoleRepositoryTest extends RepositoryTestSupport {
         roleRepository.save(role2);
         roleRepository.save(role3);
 
-        RoleSearchCondition condition = createRoleSearchCondition(null);
+        RoleSearchCondition condition = createRoleSearchCondition(0, null);
 
         // when
         Page<Role> page = roleRepository.findRolesWithCondition(condition);
@@ -97,7 +97,7 @@ class RoleRepositoryTest extends RepositoryTestSupport {
         roleRepository.save(role2);
         roleRepository.save(role3);
 
-        RoleSearchCondition condition = createRoleSearchCondition("회원");
+        RoleSearchCondition condition = createRoleSearchCondition(0, "회원");
 
         // when
         Page<Role> page = roleRepository.findRolesWithCondition(condition);
@@ -117,7 +117,7 @@ class RoleRepositoryTest extends RepositoryTestSupport {
     @DisplayName("권한 목록이 조회되지 않는 페이지 번호를 가지고 권한 목록을 조회 시 조회결과는 없다.")
     void findRolesWithConditionWithInvalidPage() {
         // given
-        RoleSearchCondition condition = createRoleSearchCondition(null);
+        RoleSearchCondition condition = createRoleSearchCondition(0, null);
 
         // when
         Page<Role> page = roleRepository.findRolesWithCondition(condition);
@@ -135,9 +135,9 @@ class RoleRepositoryTest extends RepositoryTestSupport {
                 .build();
     }
 
-    private RoleSearchCondition createRoleSearchCondition(String keyword) {
+    private RoleSearchCondition createRoleSearchCondition(int page, String keyword) {
         return RoleSearchCondition.builder()
-                .page(0)
+                .page(page)
                 .keyword(keyword)
                 .build();
     }
