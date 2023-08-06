@@ -60,9 +60,7 @@ class RoleRepositoryTest extends RepositoryTestSupport {
         Role role2 = createRole(roleType2);
         Role role3 = createRole(roleType3);
 
-        roleRepository.save(role1);
-        roleRepository.save(role2);
-        roleRepository.save(role3);
+        roleRepository.saveAll(List.of(role1, role2, role3));
 
         RoleSearchCondition condition = createRoleSearchCondition(0, null);
 
@@ -93,9 +91,7 @@ class RoleRepositoryTest extends RepositoryTestSupport {
         Role role2 = createRole(roleType2);
         Role role3 = createRole(roleType3);
 
-        roleRepository.save(role1);
-        roleRepository.save(role2);
-        roleRepository.save(role3);
+        roleRepository.saveAll(List.of(role1, role2, role3));
 
         RoleSearchCondition condition = createRoleSearchCondition(0, "회원");
 
@@ -114,10 +110,20 @@ class RoleRepositoryTest extends RepositoryTestSupport {
     }
 
     @Test
-    @DisplayName("권한 목록이 조회되지 않는 페이지 번호를 가지고 권한 목록을 조회 시 조회결과는 없다.")
+    @DisplayName("권한 목록이 조회되지 않는 페이지 번호를 가지고 권한 목록을 조회 시 첫 페이지가 조회된다.")
     void findRolesWithConditionWithInvalidPage() {
         // given
-        RoleSearchCondition condition = createRoleSearchCondition(0, null);
+        RoleType roleType1 = ROLE_ANONYMOUS;
+        RoleType roleType2 = ROLE_MEMBER;
+        RoleType roleType3 = ROLE_ADMIN;
+
+        Role role1 = createRole(roleType1);
+        Role role2 = createRole(roleType2);
+        Role role3 = createRole(roleType3);
+
+        roleRepository.saveAll(List.of(role1, role2, role3));
+
+        RoleSearchCondition condition = createRoleSearchCondition(-1, null);
 
         // when
         Page<Role> page = roleRepository.findRolesWithCondition(condition);
@@ -125,7 +131,13 @@ class RoleRepositoryTest extends RepositoryTestSupport {
         // then
         List<Role> savedRoles = page.getContent();
 
-        assertThat(savedRoles).isEmpty();
+        assertThat(savedRoles).hasSize(3)
+                .extracting("roleType", "roleDesc")
+                .containsExactlyInAnyOrder(
+                        tuple(roleType1, roleType1.getRoleDesc()),
+                        tuple(roleType2, roleType2.getRoleDesc()),
+                        tuple(roleType3, roleType3.getRoleDesc())
+                );
     }
 
     private Role createRole(RoleType roleType) {
