@@ -13,8 +13,9 @@ import com.my.authserver.domain.entity.member.auth.Role;
 import com.my.authserver.domain.entity.member.auth.RoleHierarchy;
 import com.my.authserver.member.auth.service.request.RoleHierarchyCreateServiceRequest;
 import com.my.authserver.member.enums.RoleType;
+import com.my.authserver.support.service.ServiceTestSupport;
 
-class RoleHierarchyQueryServiceTest extends RoleQueryServiceTest {
+class RoleHierarchyQueryServiceTest extends ServiceTestSupport {
 
 	@Test
 	@DisplayName("권한 계층 아이디로 권한 계층 객체를 조회할 수 있다.")
