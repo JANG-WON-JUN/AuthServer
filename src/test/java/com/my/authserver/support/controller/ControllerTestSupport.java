@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.my.authserver.member.auth.web.ResourceController;
 import com.my.authserver.member.auth.web.RoleController;
 import com.my.authserver.member.auth.web.RoleHierarchyController;
+import com.my.authserver.member.auth.web.RoleResourcesController;
 import com.my.authserver.member.web.PasswordController;
 
 /**
@@ -18,7 +19,8 @@ import com.my.authserver.member.web.PasswordController;
 	PasswordController.class,
 	RoleController.class,
 	RoleHierarchyController.class,
-	ResourceController.class
+	ResourceController.class,
+	RoleResourcesController.class
 })
 // 스프링 시큐리티를 사용하지 않을 때 필터 제외
 @AutoConfigureMockMvc(addFilters = false)

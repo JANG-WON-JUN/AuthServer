@@ -6,10 +6,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import com.my.authserver.common.utils.MessageSourceUtils;
 import com.my.authserver.member.auth.service.ResourceService;
 import com.my.authserver.member.auth.service.RoleHierarchyService;
+import com.my.authserver.member.auth.service.RoleResourceService;
 import com.my.authserver.member.auth.service.RoleService;
 import com.my.authserver.member.auth.service.query.ResourceQueryService;
 import com.my.authserver.member.auth.service.query.RoleHierarchyQueryService;
 import com.my.authserver.member.auth.service.query.RoleQueryService;
+import com.my.authserver.member.auth.service.query.RoleResourceQueryService;
 import com.my.authserver.member.service.PasswordService;
 import com.my.authserver.member.service.query.PasswordQueryService;
 
@@ -51,4 +53,10 @@ public abstract class ControllerTestMockBeanSupport {
 
 	@MockBean
 	protected ResourceQueryService resourceQueryService;
+
+	@MockBean
+	protected RoleResourceService roleResourceService;
+
+	@MockBean
+	protected RoleResourceQueryService roleResourceQueryService;
 }
