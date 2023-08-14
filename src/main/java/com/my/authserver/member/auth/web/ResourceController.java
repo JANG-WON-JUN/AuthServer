@@ -2,8 +2,6 @@ package com.my.authserver.member.auth.web;
 
 import static com.my.authserver.common.web.dto.ApiResponse.*;
 
-import java.util.List;
-
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.my.authserver.common.web.dto.ApiResponse;
-import com.my.authserver.domain.entity.member.auth.Resource;
 import com.my.authserver.member.auth.service.ResourceService;
 import com.my.authserver.member.auth.service.query.ResourceQueryService;
 import com.my.authserver.member.auth.web.request.ResourceCreateRequest;
@@ -41,14 +38,11 @@ public class ResourceController {
 	}
 
 	@GetMapping("/api/resources")
-	public ApiResponse<List<ResourceResponse>> findByResources(@RequestBody ResourceSearchCondition condition) {
-		Page<Resource> page = resourceQueryService.findResourcesWithCondition(condition);
+	public ApiResponse<Page<ResourceResponse>> findByResources(@RequestBody ResourceSearchCondition condition) {
+		Page<ResourceResponse> responsePage = resourceQueryService.findResourcesWithCondition(condition)
+			.map(ResourceResponse::of);
 
-		List<ResourceResponse> resourceResponses = page.getContent().stream()
-			.map(ResourceResponse::of)
-			.toList();
-
-		return ok(resourceResponses);
+		return ok(responsePage);
 	}
 
 	@PatchMapping("/api/resources")

@@ -100,7 +100,7 @@ class ResourceControllerTest extends ControllerTestSupport {
 				.contentType(APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(condition)))
 			.andExpect(status().isOk())
-			.andExpect(jsonPath("data.size()").value(0));
+			.andExpect(jsonPath("data.content.size()").value(0));
 	}
 
 	@Test
