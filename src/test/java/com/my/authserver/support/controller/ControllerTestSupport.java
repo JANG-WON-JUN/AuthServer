@@ -6,6 +6,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.my.authserver.member.auth.web.ResourceController;
 import com.my.authserver.member.auth.web.RoleController;
 import com.my.authserver.member.auth.web.RoleHierarchyController;
 import com.my.authserver.member.web.PasswordController;
@@ -16,7 +17,8 @@ import com.my.authserver.member.web.PasswordController;
 @WebMvcTest(controllers = {
 	PasswordController.class,
 	RoleController.class,
-	RoleHierarchyController.class
+	RoleHierarchyController.class,
+	ResourceController.class
 })
 // 스프링 시큐리티를 사용하지 않을 때 필터 제외
 @AutoConfigureMockMvc(addFilters = false)

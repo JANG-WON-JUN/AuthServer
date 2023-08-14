@@ -123,7 +123,7 @@ class ResourceRepositoryTest extends RepositoryTestSupport {
 	}
 
 	@Test
-	@DisplayName("자원명, 자원타입, http 메소드로 자원 1개를 조회한다.")
+	@DisplayName("자원 설명, 자원타입, http 메소드로 자원 1개를 조회한다.")
 	void findResource() {
 		// given
 		String resourceName = "/admin/resources";

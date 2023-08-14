@@ -26,7 +26,7 @@ import com.my.authserver.support.service.ServiceTestSupport;
 class ResourceServiceTest extends ServiceTestSupport {
 
 	@Test
-	@DisplayName("자원명, http 메소드, 자원 타입을 입력받아 자원을 생성한다.")
+	@DisplayName("자원 설명, http 메소드, 자원 타입을 입력받아 자원을 생성한다.")
 	void createResource() {
 		// given
 		String resourceName = "/resource";
@@ -61,7 +61,7 @@ class ResourceServiceTest extends ServiceTestSupport {
 	}
 
 	@Test
-	@DisplayName("자원 생성 시 자원명은 필수 입력이다.")
+	@DisplayName("자원 생성 시 자원 설명은 필수 입력이다.")
 	void createResourceWithNoResourceName() {
 		// given
 		ResourceCreateServiceRequest request = createResource("  ", GET, URL);
@@ -97,7 +97,7 @@ class ResourceServiceTest extends ServiceTestSupport {
 	}
 
 	@Test
-	@DisplayName("자원명, http 메소드, 자원 타입을 입력받아 자원을 생성한다.")
+	@DisplayName("자원 설명, http 메소드, 자원 타입을 입력받아 자원을 생성한다.")
 	void updateResource() {
 		// given
 		ResourceCreateServiceRequest request = createResource("/resource", GET, URL);
@@ -144,7 +144,7 @@ class ResourceServiceTest extends ServiceTestSupport {
 	}
 
 	@Test
-	@DisplayName("자원 수정 시 자원명은 필수 입력이다.")
+	@DisplayName("자원 수정 시 자원 설명은 필수 입력이다.")
 	void updateResourceWithNoResourceName() {
 		// given
 		ResourceUpdateServiceRequest request = updateResource(1L, "  ", GET, URL);
@@ -339,7 +339,7 @@ class ResourceServiceTest extends ServiceTestSupport {
 	}
 
 	@Test
-	@DisplayName("자원명, 자원타입, http 메소드로 자원 1개를 조회한다.")
+	@DisplayName("자원 설명, 자원타입, http 메소드로 자원 1개를 조회한다.")
 	void findResource() {
 		// given
 		String resourceName = "/admin/resources";
@@ -375,7 +375,7 @@ class ResourceServiceTest extends ServiceTestSupport {
 		"/resources,GET,URL,true",
 		"/없는 자원,GET,URL,false"
 	})
-	@DisplayName("자원명, 자원타입, http 메소드로 자원 1개의 존재여부를 확인할 수 있다.")
+	@DisplayName("자원 설명, 자원타입, http 메소드로 자원 1개의 존재여부를 확인할 수 있다.")
 	void exists(String resourceName, HttpMethod httpMethod, ResourceType resourceType, boolean result) {
 		// given
 		ResourceCreateServiceRequest request = createResource("/resources", GET, URL);
