@@ -31,10 +31,23 @@ public class RoleResourceQueryService {
 
 	@Cacheable(cacheNames = "roleResourcesCacheStore", key = "#roleType")
 	public List<RoleResource> findByRoleType(RoleType roleType) {
-		return roleResourceRepository.findByRoleType(roleType);
+		List<RoleResource> roleResources = roleResourceRepository.findByRoleType(roleType);
+		lazyLoading(roleResources);
+		return roleResources;
 	}
 
 	public Page<RoleResource> findRoleResources(RoleResourceSearchCondition condition) {
-		return roleResourceRepository.findRoleResourcesWithCondition(condition);
+		Page<RoleResource> page = roleResourceRepository.findRoleResourcesWithCondition(condition);
+		List<RoleResource> roleResources = page.getContent();
+		lazyLoading(roleResources);
+		return page;
+	}
+
+	private void lazyLoading(List<RoleResource> roleResources) {
+		roleResources.stream()
+			.forEach(roleResource -> {
+				roleResource.getRole().getRoleType();
+				roleResource.getResource().getResourceName();
+			});
 	}
 }

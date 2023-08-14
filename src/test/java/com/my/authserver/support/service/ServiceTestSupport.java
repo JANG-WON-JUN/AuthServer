@@ -8,17 +8,26 @@ import com.my.authserver.common.utils.MessageSourceUtils;
 import com.my.authserver.member.auth.repository.ResourceRepository;
 import com.my.authserver.member.auth.repository.RoleHierarchyRepository;
 import com.my.authserver.member.auth.repository.RoleRepository;
+import com.my.authserver.member.auth.repository.RoleResourceRepository;
 import com.my.authserver.member.auth.service.ResourceService;
 import com.my.authserver.member.auth.service.RoleHierarchyService;
+import com.my.authserver.member.auth.service.RoleResourceService;
 import com.my.authserver.member.auth.service.RoleService;
 import com.my.authserver.member.auth.service.query.ResourceQueryService;
 import com.my.authserver.member.auth.service.query.RoleHierarchyQueryService;
 import com.my.authserver.member.auth.service.query.RoleQueryService;
+import com.my.authserver.member.auth.service.query.RoleResourceQueryService;
 import com.my.authserver.member.service.PasswordService;
 import com.my.authserver.member.service.query.PasswordQueryService;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+
 @MyServiceTest
 public abstract class ServiceTestSupport {
+
+	@PersistenceContext
+	protected EntityManager em;
 
 	@Autowired
 	protected MessageSourceUtils messageSourceUtils;
@@ -59,4 +68,17 @@ public abstract class ServiceTestSupport {
 	@Autowired
 	protected ResourceRepository resourcesRepository;
 
+	@Autowired
+	protected RoleResourceService roleResourceService;
+
+	@Autowired
+	protected RoleResourceQueryService roleResourceQueryService;
+
+	@Autowired
+	protected RoleResourceRepository roleResourceRepository;
+
+	protected void clearPersistentContext() {
+		em.flush();
+		em.clear();
+	}
 }
