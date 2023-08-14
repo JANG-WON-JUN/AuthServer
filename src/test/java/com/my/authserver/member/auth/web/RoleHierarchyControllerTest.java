@@ -12,42 +12,16 @@ import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.web.servlet.MockMvc;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.my.authserver.common.utils.MessageSourceUtils;
 import com.my.authserver.common.web.exception.RoleHierarchyNotValid;
 import com.my.authserver.domain.entity.member.auth.Role;
 import com.my.authserver.domain.entity.member.auth.RoleHierarchy;
-import com.my.authserver.member.auth.service.RoleHierarchyService;
-import com.my.authserver.member.auth.service.query.RoleHierarchyQueryService;
 import com.my.authserver.member.auth.service.request.RoleHierarchyCreateServiceRequest;
 import com.my.authserver.member.auth.web.request.RoleHierarchyCreateRequest;
 import com.my.authserver.member.enums.RoleType;
+import com.my.authserver.support.controller.ControllerTestSupport;
 
-@WebMvcTest(controllers = RoleHierarchyController.class)
-// 스프링 시큐리티를 사용하지 않을 때 필터 제외
-@AutoConfigureMockMvc(addFilters = false)
-class RoleHierarchyControllerTest {
-
-	@Autowired
-	private MockMvc mockMvc;
-
-	@Autowired
-	private ObjectMapper objectMapper;
-
-	@MockBean
-	private RoleHierarchyService roleHierarchyService;
-
-	@MockBean
-	private RoleHierarchyQueryService roleHierarchyQueryService;
-
-	@MockBean
-	private MessageSourceUtils messageSourceUtils;
+class RoleHierarchyControllerTest extends ControllerTestSupport {
 
 	@Test
 	@DisplayName("권한 계층 생성 시 필요한 정보를 받아 권한 계층을 생성한다.")
@@ -67,7 +41,7 @@ class RoleHierarchyControllerTest {
 	}
 
 	@Test
-	@DisplayName("권한 계층 생성 시 상위권한, 하위권한이 모두 null이면 예외가 발생한다.")
+	@DisplayName("권한 계층 생성 시 상위권한, 하위권한이 모두 입력되지 않으면 생성할 수 없다.")
 	void createRoleHierarchyWithNoRole() throws Exception {
 		// given
 		RoleHierarchyCreateRequest request = createRoleHierarchyRequest(null, null);
@@ -84,7 +58,7 @@ class RoleHierarchyControllerTest {
 	}
 
 	@Test
-	@DisplayName("권한 계층 전체 조회 시 데이터가 존재하면 리스트로 반환한다.")
+	@DisplayName("권한 계층 목록을 조회할 수 있다")
 	void findRoleHierarchies() throws Exception {
 		// given
 		Role parent = createRole(ROLE_ADMIN);
@@ -105,7 +79,7 @@ class RoleHierarchyControllerTest {
 	}
 
 	@Test
-	@DisplayName("권한 계층 전체 조회 시 데이터가 존재하지 않으면 비어있는 리스트를 반환한다.")
+	@DisplayName("권한 계층 전체 조회 시 데이터가 존재하지 않으면 조회결과는 없다.")
 	void findRoleHierarchiesWithNoRoleHierarchy() throws Exception {
 		// given
 		given(roleHierarchyQueryService.findRoleHierarchies())

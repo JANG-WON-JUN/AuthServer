@@ -7,36 +7,14 @@ import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import com.my.authserver.annotation.MyServiceTest;
-import com.my.authserver.common.utils.MessageSourceUtils;
 import com.my.authserver.common.web.exception.RoleHierarchyNotFound;
 import com.my.authserver.domain.entity.member.auth.Role;
 import com.my.authserver.domain.entity.member.auth.RoleHierarchy;
-import com.my.authserver.member.auth.repository.RoleHierarchyRepository;
-import com.my.authserver.member.auth.repository.RoleRepository;
-import com.my.authserver.member.auth.service.RoleHierarchyService;
 import com.my.authserver.member.auth.service.request.RoleHierarchyCreateServiceRequest;
 import com.my.authserver.member.enums.RoleType;
 
-@MyServiceTest
-class RoleHierarchyQueryServiceTest {
-
-	@Autowired
-	private RoleHierarchyService roleHierarchyService;
-
-	@Autowired
-	private RoleHierarchyQueryService roleHierarchyQueryService;
-
-	@Autowired
-	private MessageSourceUtils messageSourceUtils;
-
-	@Autowired
-	private RoleHierarchyRepository roleHierarchyRepository;
-
-	@Autowired
-	private RoleRepository roleRepository;
+class RoleHierarchyQueryServiceTest extends RoleQueryServiceTest {
 
 	@Test
 	@DisplayName("권한 계층 아이디로 권한 계층 객체를 조회할 수 있다.")
@@ -56,7 +34,7 @@ class RoleHierarchyQueryServiceTest {
 	}
 
 	@Test
-	@DisplayName("존재하지 않는 권한 계층 아이디로 권한 계층 객체를 조회 시 예외가 발생한다.")
+	@DisplayName("존재하지 않는 권한 계층 아이디로 권한 계층 데이터를 조회할 수 없다.")
 	void findByIdWithNoId() {
 		// given
 
@@ -87,7 +65,7 @@ class RoleHierarchyQueryServiceTest {
 	}
 
 	@Test
-	@DisplayName("권한 계층을 전체 조회할 시 데이터가 없으면 비어있는 리스트를 반환한다.")
+	@DisplayName("권한 계층을 전체 조회할 시 데이터가 없으면 조회결과는 없다.")
 	void findRoleHierarchiesWithEmptyList() {
 		// given
 

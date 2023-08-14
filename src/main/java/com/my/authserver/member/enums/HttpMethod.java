@@ -1,5 +1,5 @@
 package com.my.authserver.member.enums;
 
 public enum HttpMethod {
-	GET, POST, PUT, DELETE
+	ALL, GET, POST, PUT, PATCH, DELETE
 }

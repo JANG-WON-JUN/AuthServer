@@ -7,31 +7,14 @@ import static org.assertj.core.api.Assertions.*;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
-import com.my.authserver.annotation.MyServiceTest;
-import com.my.authserver.common.utils.MessageSourceUtils;
 import com.my.authserver.common.web.exception.PasswordNotMatched;
 import com.my.authserver.domain.entity.member.Password;
-import com.my.authserver.member.service.query.PasswordQueryService;
 import com.my.authserver.member.service.request.PasswordCreateServiceRequest;
 import com.my.authserver.member.service.request.PasswordUpdateServiceRequest;
+import com.my.authserver.support.service.ServiceTestSupport;
 
-@MyServiceTest
-class PasswordServiceTest {
-
-	@Autowired
-	private PasswordService passwordService;
-
-	@Autowired
-	private PasswordQueryService passwordQueryService;
-
-	@Autowired
-	private MessageSourceUtils messageSourceUtils;
-
-	@Autowired
-	private PasswordEncoder passwordEncoder;
+class PasswordServiceTest extends ServiceTestSupport {
 
 	@Test
 	@DisplayName("비멀번호를 생성한다.")

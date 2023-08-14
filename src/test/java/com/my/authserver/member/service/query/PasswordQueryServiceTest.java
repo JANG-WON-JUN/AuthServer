@@ -7,25 +7,12 @@ import static org.assertj.core.api.Assertions.*;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import com.my.authserver.annotation.MyServiceTest;
-import com.my.authserver.common.utils.MessageSourceUtils;
 import com.my.authserver.common.web.exception.PasswordNotFound;
 import com.my.authserver.domain.entity.member.Password;
-import com.my.authserver.member.service.PasswordService;
+import com.my.authserver.support.service.ServiceTestSupport;
 
-@MyServiceTest
-class PasswordQueryServiceTest {
-
-	@Autowired
-	private PasswordService passwordService;
-
-	@Autowired
-	private PasswordQueryService passwordQueryService;
-
-	@Autowired
-	private MessageSourceUtils messageSourceUtils;
+class PasswordQueryServiceTest extends ServiceTestSupport {
 
 	@Test
 	@DisplayName("패스워드 식별자로 패스워드를 조회한다.")

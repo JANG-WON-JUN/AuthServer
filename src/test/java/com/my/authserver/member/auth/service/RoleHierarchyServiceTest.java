@@ -5,37 +5,16 @@ import static org.assertj.core.api.Assertions.*;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import com.my.authserver.annotation.MyServiceTest;
-import com.my.authserver.common.utils.MessageSourceUtils;
 import com.my.authserver.common.web.exception.RoleHierarchyNotFound;
 import com.my.authserver.common.web.exception.RoleHierarchyNotValid;
 import com.my.authserver.domain.entity.member.auth.Role;
 import com.my.authserver.domain.entity.member.auth.RoleHierarchy;
-import com.my.authserver.member.auth.repository.RoleHierarchyRepository;
-import com.my.authserver.member.auth.repository.RoleRepository;
-import com.my.authserver.member.auth.service.query.RoleHierarchyQueryService;
 import com.my.authserver.member.auth.service.request.RoleHierarchyCreateServiceRequest;
 import com.my.authserver.member.enums.RoleType;
+import com.my.authserver.support.service.ServiceTestSupport;
 
-@MyServiceTest
-class RoleHierarchyServiceTest {
-
-	@Autowired
-	private RoleHierarchyService roleHierarchyService;
-
-	@Autowired
-	private RoleHierarchyQueryService roleHierarchyQueryService;
-
-	@Autowired
-	private MessageSourceUtils messageSourceUtils;
-
-	@Autowired
-	private RoleHierarchyRepository roleHierarchyRepository;
-
-	@Autowired
-	private RoleRepository roleRepository;
+class RoleHierarchyServiceTest extends ServiceTestSupport {
 
 	@Test
 	@DisplayName("관리자 권한과 회원 권한을 입력받아 권한 계층을 생성한다.")
@@ -55,7 +34,7 @@ class RoleHierarchyServiceTest {
 	}
 
 	@Test
-	@DisplayName("관리자는 부모를 null로 입력하여 저장할 수 있다.")
+	@DisplayName("관리자 권한은 상위 권한을 입력하지 않고도 권한 계층을 등록할 수 있다.")
 	void createRoleHierarchyWithTopPriority() {
 		// given
 		saveRoles();
@@ -72,7 +51,7 @@ class RoleHierarchyServiceTest {
 	}
 
 	@Test
-	@DisplayName("관리자를 제외한 나머지 권한은 부모를 null로 입력하여 저장할 수 없다.")
+	@DisplayName("관리자를 제외한 나머지 권한은 부모 권한은 필수 입력이다.")
 	void createRoleHierarchyWithOthersPriority() {
 		// given
 		saveRoles();
@@ -85,7 +64,7 @@ class RoleHierarchyServiceTest {
 	}
 
 	@Test
-	@DisplayName("권한 우선순위가 낮은 권한을 부모 권한으로 입력하면 예외가 발생한다.")
+	@DisplayName("권한 등록 시 우선순위가 지켜지지 않으면 등록할 수 없다.")
 	void createRoleHierarchyWithNoValidHierarchy() {
 		// given
 		saveRoles();
@@ -98,7 +77,7 @@ class RoleHierarchyServiceTest {
 	}
 
 	@Test
-	@DisplayName("동일한 권한을 입력받아 권한 계층 생성 시 예외가 발생한다.")
+	@DisplayName("상위 권한과 하위 권한에 동일한 권한을 입력하여 권한 계층을 생성할 수 없다.")
 	void createRoleHierarchyWithSameRole() {
 		// given
 		saveRoles();
@@ -124,7 +103,7 @@ class RoleHierarchyServiceTest {
 	}
 
 	@Test
-	@DisplayName("권한 계층 id로 삭제할 수 있다.")
+	@DisplayName("권한 계층은 id로 삭제할 수 있다.")
 	void deleteRoleHierarchy() {
 		// given
 		saveRoles();
@@ -140,7 +119,7 @@ class RoleHierarchyServiceTest {
 	}
 
 	@Test
-	@DisplayName("권한 계층 삭제 시 이미 존재하지 않는 권한 계층인 경우 예외가 발생한다.")
+	@DisplayName("권한 계층 삭제 시 이미 존재하지 않는 권한은 삭제할 수 없다.")
 	void deleteRoleHierarchyWithInvalidId() {
 		// given
 		saveRoles();

@@ -1,13 +1,13 @@
-package com.my.authserver.member.auth.web.request;
-
-import static java.lang.Math.*;
-
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+package com.my.authserver.member.auth.web.searchcondition;
 
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+
+import static java.lang.Math.max;
+import static java.lang.Math.min;
 
 @Getter
 @NoArgsConstructor

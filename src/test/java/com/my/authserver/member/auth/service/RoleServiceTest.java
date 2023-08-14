@@ -7,33 +7,16 @@ import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import com.my.authserver.annotation.MyServiceTest;
-import com.my.authserver.common.utils.MessageSourceUtils;
 import com.my.authserver.common.web.exception.RoleAlreadyExists;
 import com.my.authserver.common.web.exception.RoleNotFound;
 import com.my.authserver.domain.entity.member.auth.Role;
-import com.my.authserver.member.auth.repository.RoleRepository;
-import com.my.authserver.member.auth.service.query.RoleQueryService;
 import com.my.authserver.member.auth.service.request.RoleCreateServiceRequest;
 import com.my.authserver.member.auth.service.request.RoleUpdateServiceRequest;
 import com.my.authserver.member.enums.RoleType;
+import com.my.authserver.support.service.ServiceTestSupport;
 
-@MyServiceTest
-class RoleServiceTest {
-
-	@Autowired
-	private RoleService roleService;
-
-	@Autowired
-	private RoleQueryService roleQueryService;
-
-	@Autowired
-	private RoleRepository roleRepository;
-
-	@Autowired
-	private MessageSourceUtils messageSourceUtils;
+class RoleServiceTest extends ServiceTestSupport {
 
 	@Test
 	@DisplayName("권한 타입과 권한 설명을 받아 권한을 생성한다.")
@@ -53,7 +36,7 @@ class RoleServiceTest {
 	}
 
 	@Test
-	@DisplayName("이미 존재하는 권한을 생성하려하면 예외가 발생한다.")
+	@DisplayName("이미 존재하는 권한은 생성할 수 없다.")
 	void createRoleWithExistsRole() {
 		// given
 		RoleType roleType = RoleType.ROLE_ANONYMOUS;
@@ -68,7 +51,7 @@ class RoleServiceTest {
 	}
 
 	@Test
-	@DisplayName("권한 생성 시 권한 타입이 없으면 예외를 발생시킨다.")
+	@DisplayName("권한 생성 시 권한 타입은 필수 입력이다.")
 	void createRoleWithNoRoleType() {
 		// given
 		RoleCreateServiceRequest request = createRequest(null, "권한 설명");
@@ -80,7 +63,7 @@ class RoleServiceTest {
 	}
 
 	@Test
-	@DisplayName("권한 생성 시 권한 설명이 없으면 예외를 발생시킨다.")
+	@DisplayName("권한 생성 시 권한 설명은 필수 입력이다.")
 	void createRoleWithNoRoleDesc() {
 		// given
 		RoleCreateServiceRequest request = createRequest(ROLE_ADMIN, null);
@@ -92,7 +75,7 @@ class RoleServiceTest {
 	}
 
 	@Test
-	@DisplayName("권한 생성 시 권한 설명이 빈값이거나 공백이면 예외를 발생시킨다.")
+	@DisplayName("권한 생성 시 권한 설명에 공백이나 빈 문자열을 입력할 수 없다.")
 	void createRoleWithWhiteSpaceRoleDesc() {
 		// given
 		RoleCreateServiceRequest request = createRequest(ROLE_ADMIN, " ");
@@ -128,15 +111,15 @@ class RoleServiceTest {
 		RoleType roleType = RoleType.ROLE_ANONYMOUS;
 		String newRoleDesc = "새로운 비회원 설명";
 		RoleCreateServiceRequest request = createRequest(roleType);
-		RoleUpdateServiceRequest updateRequest = updateRequest(newRoleDesc);
 
-		roleService.createRole(request);
+		Long savedRoleId = roleService.createRole(request);
+		RoleUpdateServiceRequest updateRequest = updateRequest(savedRoleId, newRoleDesc);
 
 		// when
-		Long savedRoleId = roleService.updateRole(updateRequest);
+		Long updatedRoleId = roleService.updateRole(updateRequest);
 
 		// then
-		Role savedRole = roleQueryService.findById(savedRoleId);
+		Role savedRole = roleQueryService.findById(updatedRoleId);
 		assertThat(savedRole.getRoleDesc()).isEqualTo(newRoleDesc);
 	}
 
@@ -145,7 +128,7 @@ class RoleServiceTest {
 	void updateRoleWithNoRoleDesc() {
 		// given
 		createRequest(ROLE_ADMIN);
-		RoleUpdateServiceRequest updateRequest = updateRequest(" ");
+		RoleUpdateServiceRequest updateRequest = updateRequest(0L, " ");
 
 		// expected
 		assertThatThrownBy(() -> roleService.updateRole(updateRequest))
@@ -154,7 +137,7 @@ class RoleServiceTest {
 	}
 
 	@Test
-	@DisplayName("존재하지 않는 권한의 id로 삭제 시 예외가 발생한다.")
+	@DisplayName("존재하지 않는 권한의 id로 권한을 삭제할 수 없다.")
 	void deleteRoleWithNoRoleId() {
 		// given
 		Long notExistsRoleId = 1L;
@@ -176,9 +159,9 @@ class RoleServiceTest {
 			.build();
 	}
 
-	private RoleUpdateServiceRequest updateRequest(String roleDesc) {
+	private RoleUpdateServiceRequest updateRequest(Long id, String roleDesc) {
 		return RoleUpdateServiceRequest.builder()
-			.id(1L)
+			.id(id)
 			.roleDesc(roleDesc)
 			.build();
 	}
