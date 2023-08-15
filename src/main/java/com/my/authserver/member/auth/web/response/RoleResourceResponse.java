@@ -21,11 +21,11 @@ public class RoleResourceResponse {
 		this.resource = resource;
 	}
 
-	public static RoleResourceResponse of(RoleResource roleResource) {
+	public static RoleResourceResponse from(RoleResource roleResource) {
 		return RoleResourceResponse.builder()
 			.id(roleResource.getId())
-			.role(RoleResponse.of(roleResource.getRole()))
-			.resource(ResourceResponse.of(roleResource.getResource()))
+			.role(RoleResponse.from(roleResource.getRole()))
+			.resource(ResourceResponse.from(roleResource.getResource()))
 			.build();
 	}
 }

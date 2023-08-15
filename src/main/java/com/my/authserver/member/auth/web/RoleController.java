@@ -41,14 +41,14 @@ public class RoleController {
 	@GetMapping("/api/roles/{id}")
 	public ApiResponse<RoleResponse> findRole(@PathVariable Long id) {
 		Role savedRole = roleQueryService.findById(id);
-		RoleResponse savedRoleResponse = RoleResponse.of(savedRole);
+		RoleResponse savedRoleResponse = RoleResponse.from(savedRole);
 		return ok(savedRoleResponse);
 	}
 
 	@GetMapping("/api/roles")
 	public ApiResponse<Page<RoleResponse>> findRoles(@RequestBody RoleSearchCondition condition) {
 		Page<RoleResponse> responsePage = roleQueryService.findRolesWithCondition(condition)
-			.map(RoleResponse::of);
+			.map(RoleResponse::from);
 
 		return ok(responsePage);
 	}

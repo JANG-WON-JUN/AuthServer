@@ -17,7 +17,7 @@ public class PasswordResponse {
 		this.id = id;
 	}
 
-	public static PasswordResponse of(Password password) {
+	public static PasswordResponse from(Password password) {
 		return PasswordResponse.builder()
 			.id(password.getId())
 			.build();

@@ -22,7 +22,7 @@ public class RoleResponse {
 		this.roleDesc = roleDesc;
 	}
 
-	public static RoleResponse of(Role role) {
+	public static RoleResponse from(Role role) {
 		return RoleResponse.builder()
 			.id(role.getId())
 			.roleType(role.getRoleType())

@@ -40,7 +40,7 @@ public class ResourceController {
 	@GetMapping("/api/resources")
 	public ApiResponse<Page<ResourceResponse>> findByResources(@RequestBody ResourceSearchCondition condition) {
 		Page<ResourceResponse> responsePage = resourceQueryService.findResourcesWithCondition(condition)
-			.map(ResourceResponse::of);
+			.map(ResourceResponse::from);
 
 		return ok(responsePage);
 	}

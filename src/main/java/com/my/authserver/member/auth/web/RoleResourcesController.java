@@ -38,7 +38,7 @@ public class RoleResourcesController {
 	@GetMapping("/api/roleResources")
 	public ApiResponse<Page<RoleResourceResponse>> findResources(RoleResourceSearchCondition condition) {
 		Page<RoleResourceResponse> responsePage =
-			roleResourceQueryService.findRoleResources(condition).map(RoleResourceResponse::of);
+			roleResourceQueryService.findRoleResources(condition).map(RoleResourceResponse::from);
 
 		return ok(responsePage);
 	}

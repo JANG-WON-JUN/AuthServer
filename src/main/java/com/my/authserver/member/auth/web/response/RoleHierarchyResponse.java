@@ -21,11 +21,11 @@ public class RoleHierarchyResponse {
 		this.child = child;
 	}
 
-	public static RoleHierarchyResponse of(RoleHierarchy roleHierarchy) {
+	public static RoleHierarchyResponse from(RoleHierarchy roleHierarchy) {
 		return RoleHierarchyResponse.builder()
 			.id(roleHierarchy.getId())
-			.parent(RoleResponse.of(roleHierarchy.getParent()))
-			.child(RoleResponse.of(roleHierarchy.getChild()))
+			.parent(RoleResponse.from(roleHierarchy.getParent()))
+			.child(RoleResponse.from(roleHierarchy.getChild()))
 			.build();
 	}
 }

@@ -25,7 +25,7 @@ public class ResourceResponse {
 		this.resourceType = resourceType;
 	}
 
-	public static ResourceResponse of(Resource resource) {
+	public static ResourceResponse from(Resource resource) {
 		return ResourceResponse.builder()
 			.id(resource.getId())
 			.resourceName(resource.getResourceName())
